@@ -1,0 +1,25 @@
+.signin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  
+  
+}
+
+.signin-form {
+  width: 500px;
+  border: 2px solid rgb(35, 168, 201);
+  padding: 20px;
+  border-radius: 30px;
+  background-color: azure;
+  font-size: large;
+  font-weight: bold;
+}
+
+.submit-container {
+  display: flex;
+  justify-content: center;
+ 
+}
+
