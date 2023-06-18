@@ -3,14 +3,16 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import SignIn from './pages/sign_in/SignIn';
 import NavigateTest from './pages/testpages/TestNavigate';
 import { Container } from 'react-bootstrap';
+import CustomerPage from './pages/customer/Customer';
 
 const App = () => (
  
-  <Container  >
+  <Container fluid  >
       <Router>
     <Routes>
-      <Route path="/" element={<SignIn />} />
+      <Route path="/ss" element={<SignIn />} />
       <Route path="/signIn" element={<NavigateTest />} />
+      <Route path="/" element={<CustomerPage />} />
 
     </Routes>
   </Router>

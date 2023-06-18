@@ -1,0 +1,69 @@
+.chart1{
+    background-color: rgb(233, 240, 240);
+    padding: 100px;
+}
+.chart2{
+    background-color: rgb(189, 196, 184);
+    padding: 100px;
+}
+.chart3{
+    background-color: rgb(244, 249, 249);
+    padding: 100px;
+}
+.speedometer {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+/* TestCharts.css */
+
+.gauge-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .gauge {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: #f2f2f2;
+    overflow: hidden;
+  }
+  
+  .dial {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transform: rotate(45deg);
+    border-radius: 50%;
+  }
+  
+  .needle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 90px;
+    background-color: #f00;
+    transform-origin: bottom center;
+    transform: translate(-50%, -100%);
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  .value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  /* Add additional styles as needed */
+  

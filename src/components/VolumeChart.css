@@ -1,0 +1,9 @@
+.charts{
+  background-color: aliceblue;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-width: 5px;
+  border-color: black;
+  border-style: solid;
+  border-radius: 8px;
+}

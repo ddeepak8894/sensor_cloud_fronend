@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { Button, Container } from 'react-bootstrap';
 import { LineChart, Line, BarChart, Bar, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import "../components/VolumeChart.css"
 
-const TestChart = () => {
+const VolumeChart = () => {
   const [chartData, setChartData] = useState([]);
   const [scatterData, setScatterData] = useState([]);
   const [barData, setBarData] = useState([]);
@@ -66,22 +68,26 @@ const TestChart = () => {
 
   return (
     
-    <div className="container">
-      <h2>Test Chart</h2>
-      <button onClick={handleClearData}>Clear All Data</button>
-      <div className="charts">
-        <LineChart width={1100} height={300} data={chartData}>
+    <Container>
+    
+     
+    <Button onClick={handleClearData} variant="danger">Clear The Chart</Button>{' '}
+     
+    
+      <div className="charts" >
+        <LineChart width={500} height={300} data={chartData}>
           <XAxis dataKey="time" />
-          <YAxis />
-          <CartesianGrid stroke="#eee" strokeWidth={2} strokeDasharray="5 5" />
+          <YAxis label="Volume"  color='black'/>
+          <CartesianGrid stroke="orange" strokeWidth={2} strokeDasharray="5 5" />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="value" stroke="#8884d8" />
+          <Line type="monotone" dataKey="value" stroke="black" />
         </LineChart>
+     </div>
+   
+    </Container>
 
-      </div>
-    </div>
   );
 };
 
-export default TestChart;
+export default VolumeChart;
