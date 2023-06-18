@@ -69,11 +69,6 @@ const VolumeChart = () => {
   return (
     
     <Container>
-    
-     
-    <Button onClick={handleClearData} variant="danger">Clear The Chart</Button>{' '}
-     
-    
       <div className="charts" >
         <LineChart width={500} height={300} data={chartData}>
           <XAxis dataKey="time" />
