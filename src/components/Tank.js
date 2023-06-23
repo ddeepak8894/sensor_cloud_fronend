@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, ProgressBar, Row } from 'react-bootstrap';
 import { LineChart, Line, BarChart, Bar, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import "../components/VolumeChart.css"
+import "../components/Tank.css"
 
-const VolumeChart = () => {
+const Tank = () => {
   const [chartData, setChartData] = useState([]);
   const [scatterData, setScatterData] = useState([]);
   const [barData, setBarData] = useState([]);
@@ -47,7 +47,14 @@ const VolumeChart = () => {
     const latestValue = valueArray[valueArray.length-1].value/20;
 
     setCurrentStatus(hasSamplesFromLastThreeSeconds);
-    setCurrentValue(latestValue*100);
+    if (hasSamplesFromLastThreeSeconds){
+        setCurrentValue(latestValue*100);
+    }else{
+        setCurrentValue(0)
+    }
+        
+    
+    
     console.log("value of current value = "+latestValue*100)
     setCurrentStatus(hasSamplesFromLastThreeSeconds);
     return data
@@ -86,18 +93,14 @@ const VolumeChart = () => {
   return (
     
     <Container>
-   
-      <div className="charts" >
-      {currentStatus ? <Button style={{marginBottom:10,color:"yellow",fontSize:"large",fontWeight:"bold"}} variant="success">Sensor Is Live{filterData.value}</Button> :<Button style={{marginBottom:10,color:"yellow",fontSize:"large",fontWeight:"bold"}} variant="danger">Sensor is Off</Button>}
-        <LineChart width={500} height={300} data={chartData}>
-          <XAxis dataKey="time" />
-          <YAxis />
-          <CartesianGrid stroke="orange" strokeWidth={2} strokeDasharray="5 5" />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="value" stroke="red" />
-        </LineChart>
-     </div>
+      
+      <div className="charts">
+  <ProgressBar  style={{height:"80mm",width:"200mm",backgroundColor:"orange",fontSize:"large",fontWeight:"bold"}} animated striped variant="success" now={currentValue} label={`${200*currentValue}Liters`} />
+  <Button style={{marginTop:"3mm",color:"yellow",fontSize:"large",fontWeight:"bold"}} variant="success">{currentValue*200}{"Liters"}</Button> 
+
+</div>
+
+      
       
       
 
@@ -108,4 +111,4 @@ const VolumeChart = () => {
   );
 };
 
-export default VolumeChart;
+export default Tank;

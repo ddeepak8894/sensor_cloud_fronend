@@ -6,4 +6,8 @@
   border-color: black;
   border-style: solid;
   border-radius: 8px;
+  padding:50px
+}
+.rotate90 {
+  transform: rotate(270deg);
 }

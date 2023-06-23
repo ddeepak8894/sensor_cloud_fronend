@@ -1,7 +1,10 @@
-import { Badge, Button, Card, Col, Container, Form, Nav, NavDropdown, Navbar, Row, Stack } from "react-bootstrap";
+import { Badge, Button, Card, Col, Container, Form, Nav, NavDropdown, Navbar, ProgressBar, Row, Stack } from "react-bootstrap";
 import TestChart from "../../components/TestChart";
 import VolumeChart from "../../components/VolumeChart";
 import { useState } from "react";
+import {URL} from "../../config.js"
+import "../customer/Customer.css"
+import Tank from "../../components/Tank";
 
 function CustomerPage() {
 
@@ -85,31 +88,11 @@ function CustomerPage() {
       </Navbar>
       <Row>
         <Col><VolumeChart></VolumeChart></Col>
-        <Col style={{backgroundColor:"white",borderRadius:10,margin:10}}>
-        <table  className="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">Name</th>
-     <th scope="col">Handle</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Reset The Chart</td>
-     <td> <Button onClick={handleClearData} variant="danger">Secondary</Button></td>
-    </tr>
-    <tr>
-       <td>Current Status</td>
-       <td> <Button variant="success">Success</Button><Badge pill bg="warning" text="dark">
-        Warning
-      </Badge></td>
-    </tr>
-    <tr>
-      <td>Stop Sensor</td>
-      <td> <Button variant="danger">Success</Button></td>
-    </tr>
-  </tbody>
-</table></Col>
+        <Col >       
+        <Tank></Tank>
+        
+        </Col>
+  
       </Row>
       <Row>
    
@@ -222,6 +205,30 @@ function CustomerPage() {
     <tr>
       <td>Start Sensor</td>
       <td> <Button variant="success">Success</Button></td>
+    </tr>
+  </tbody>
+</table></Col>      <Col className="boxClass" style={{backgroundColor:"white",borderRadius:10,margin:10}}>
+        <table  className="table table-hover ">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+     <th scope="col">Handle</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Reset The Chart</td>
+     <td> <Button onClick={handleClearData} variant="danger">Click to reset</Button></td>
+    </tr>
+    <tr>
+       <td>Start The sensor</td>
+       <td> <Button variant="success">click to start..</Button><Badge pill bg="warning" text="dark">
+        Warning
+      </Badge></td>
+    </tr>
+    <tr>
+      <td>Stop Sensor</td>
+      <td> <Button variant="danger">Click to Stop</Button></td>
     </tr>
   </tbody>
 </table></Col>
