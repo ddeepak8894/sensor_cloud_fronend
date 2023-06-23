@@ -86,18 +86,21 @@ const VolumeChart = () => {
   return (
     
     <Container>
-   
+      <Row>
+      <Col>
       <div className="charts" >
       {currentStatus ? <Button style={{marginBottom:10,color:"yellow",fontSize:"large",fontWeight:"bold"}} variant="success">Sensor Is Live{filterData.value}</Button> :<Button style={{marginBottom:10,color:"yellow",fontSize:"large",fontWeight:"bold"}} variant="danger">Sensor is Off</Button>}
-        <LineChart width={500} height={300} data={chartData}>
+       {currentStatus &&     <LineChart width={500} height={300} data={chartData}>
           <XAxis dataKey="time" />
           <YAxis />
           <CartesianGrid stroke="orange" strokeWidth={2} strokeDasharray="5 5" />
           <Tooltip />
           <Legend />
           <Line type="monotone" dataKey="value" stroke="red" />
-        </LineChart>
-     </div>
+        </LineChart>}
+    
+     </div></Col>
+      </Row>
       
       
 

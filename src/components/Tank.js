@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, ProgressBar, Row } from 'react-bootstrap';
 import { LineChart, Line, BarChart, Bar, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import "../components/Tank.css"
+import { Progress } from 'rsuite';
+
 
 const Tank = () => {
   const [chartData, setChartData] = useState([]);
@@ -95,13 +97,31 @@ const Tank = () => {
     <Container>
       
       <div className="charts">
-  <ProgressBar  style={{height:"80mm",width:"200mm",backgroundColor:"orange",fontSize:"large",fontWeight:"bold"}} animated striped variant="success" now={currentValue} label={`${200*currentValue}Liters`} />
-  <Button style={{marginTop:"3mm",color:"yellow",fontSize:"large",fontWeight:"bold"}} variant="success">{currentValue*200}{"Liters"}</Button> 
+        <Row> {
+            currentStatus &&  <Col>    <div className="progress progress-bar-vertical" style={{backgroundColor:"orange",height:"90mm",width:"80mm",border:"3px",borderStyle:"solid"}}>
+            <div className="progress-bar progress-bar-success progress-bar-striped active"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style={{height: `${currentValue}%`,width:"100mm"}}>
+              <span className="sr-only">{(currentValue * 200).toFixed(2)}Liters</span>
+            </div>
+          </div></Col>
+            }
+          
+  <Col>
+    {
+        currentStatus ? <h1 style={{color:"green"}}> <span className="sr-only">{(currentValue * 200).toFixed(2)} Liters Water Present In Tank</span></h1> :<h1 style={{color:"red"}}>Sensor at Location is Off</h1>
+    }
+  </Col>
+     
+            
+            {/* <ProgressBar  style={{height:"50mm",width:"100mm",backgroundColor:"orange",fontSize:"large",fontWeight:"bold",transform:"rotate(270deg)",marginTop:"60px",marginBottom:"15mm"}} animated striped variant="success" now={currentValue} /> */}
+           
+        </Row>
+    
+ 
 
 </div>
 
       
-      
+
       
 
  
