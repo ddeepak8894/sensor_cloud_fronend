@@ -5,6 +5,9 @@ import NavigateTest from './pages/testpages/TestNavigate';
 import { Container } from 'react-bootstrap';
 import CustomerPage from './pages/customer/Customer';
 import SideBar from './components/SideBar';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const App = () => (
  
@@ -12,12 +15,14 @@ const App = () => (
     
       <Router>
     <Routes>
-      <Route path="/ss" element={<SignIn />} />
+      <Route path="/" element={<SignIn />} />
       <Route path="/signIn" element={<NavigateTest />} />
-      <Route path="/" element={<CustomerPage />} />
+      <Route path="/myPage" element={<CustomerPage />} />
 
     </Routes>
+    <ToastContainer  />
   </Router>
+  
   </Container>
 
 );
