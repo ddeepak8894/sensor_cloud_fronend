@@ -7,6 +7,7 @@ import CustomerPage from './pages/customer/Customer';
 import SideBar from './components/SideBar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LogoutPage from './components/logoutPage/logoutPage';
 
 
 const App = () => (
@@ -18,6 +19,7 @@ const App = () => (
       <Route path="/" element={<SignIn />} />
       <Route path="/signIn" element={<NavigateTest />} />
       <Route path="/myPage" element={<CustomerPage />} />
+      <Route path="/logout" element={<LogoutPage />} />
 
     </Routes>
     <ToastContainer  />

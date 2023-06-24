@@ -14,17 +14,29 @@ import {
 } from "react-bootstrap";
 import TestChart from "../../components/TestChart";
 import VolumeChart from "../../components/VolumeChart";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { URL } from "../../config.js";
 import "../customer/Customer.css";
 import Tank from "../../components/Tank";
 import AddEmployeeForm from "../../components/addCustomerForm/addCustomerForm";
 import AddCustomerForm from "../../components/addCustomerForm/addCustomerForm";
 import { ToastContainer, toast } from "react-toastify";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import AddSensorForm from "../../components/addSensorForm/addSensorForm";
 
 function CustomerPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [addEmployee, setAddEmployee] = useState(false);
+  
   const [isAdmin, setIsAdmin] = useState(true);
+ const [userData,setUserData]=useState({})
+ const [userId,setUserId]=useState(localStorage.getItem('userId'))
+ 
+
+  
+
   const handleDataForm = () => {
     setAddEmployee(!addEmployee);
   };
@@ -54,6 +66,29 @@ function CustomerPage() {
       console.error("Error clearing data:", error);
     }
   };
+  const getUserDataFromServer=(userId)=>{
+    console.log("user id in get user data from server "+userId)
+    const body = {
+      userId
+    }
+    console.log("user in body "+userId)
+    axios.post(`${URL}/user/getUser`,body).then((res)=>{
+      console.log(res.data.data)
+      setUserData(res.data.data)
+      if(res.data.data=="USER_DOES_NOT_EXIST"){
+        navigate("/")
+       toast.warning("please login again")
+        
+      }else{
+       
+      }
+    })
+
+  }
+  useEffect(()=>{
+    console.log("userid in useeffect = "+userId)
+    getUserDataFromServer(userId);
+  },[]);
 
   return (
     <Container fluid>
@@ -68,7 +103,7 @@ function CustomerPage() {
               navbarScroll
             >
               <Navbar.Text>
-                Signed in as: <a href="#login">K Yadav</a>
+                Signed in as: <a href="#login">{userData.firstName}</a>
               </Navbar.Text>
               {isAdmin && (
                 <NavDropdown title="Customer" id="navbarScrollingDropdown">
@@ -108,6 +143,7 @@ function CustomerPage() {
                 aria-label="Search"
               />
               <Button variant="outline-success">Search</Button>
+              <Button onClick={()=>{navigate("/logout")}} variant="primary">Logout</Button>
             </Form>
           </Navbar.Collapse>
         </Container>
@@ -129,39 +165,10 @@ function CustomerPage() {
           </Col>
         )}
         {addSensor && (
-          <Col
-            style={{ backgroundColor: "white", borderRadius: 10, margin: 10 }}
-          >
-            <Form>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Name Of Sensor</Form.Label>
-                <Form.Control type="text" placeholder="Enter Name Of Sensor" />
-              </Form.Group>
-
-              <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Current Status</Form.Label>
-                <Form.Control type="text" placeholder="Enter Current Statu" />
-              </Form.Group>
-              <Stack direction="horizontal" gap={3}>
-                <div className="p-2">
-                  {" "}
-                  <Button variant="primary" type="submit">
-                    Submit
-                  </Button>
-                </div>
-                <div className="p-2">
-                  <Button
-                    onClick={() => {
-                      setAddSensor(false);
-                    }}
-                    variant="success"
-                  >
-                    Close
-                  </Button>
-                </div>
-              </Stack>
-            </Form>
-          </Col>
+             <Col style={{ backgroundColor: "white", borderRadius: 10, margin: 10 }}>
+              <AddSensorForm setAddSensor={setAddSensor} userId={userId}></AddSensorForm>
+             </Col>
+            
         )}
       </Row>
       <Row>
@@ -169,8 +176,9 @@ function CustomerPage() {
           <table style={{ borderRadius: 20 }} className="table table-hover">
             <thead>
               <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Handle</th>
+                <th scope="col">SensorId</th>
+                <th scope="col">Name Of Sensor</th>
+                <th scope="col">Current Status</th>
               </tr>
             </thead>
             <tbody>

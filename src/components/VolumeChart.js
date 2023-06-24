@@ -48,7 +48,7 @@ const VolumeChart = () => {
 
     setCurrentStatus(hasSamplesFromLastThreeSeconds);
     setCurrentValue(latestValue*100);
-    console.log("value of current value = "+latestValue*100)
+   
     setCurrentStatus(hasSamplesFromLastThreeSeconds);
     return data
       .filter(item => new Date(item.sampleTakenAt).getTime() >= tenMinutesAgo)
