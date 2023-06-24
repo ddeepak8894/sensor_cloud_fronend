@@ -33,7 +33,7 @@ function CustomerPage() {
   const [isAdmin, setIsAdmin] = useState(true);
  const [userData,setUserData]=useState({})
  const [userId,setUserId]=useState(localStorage.getItem('userId'))
- 
+ const [sensorList,setSensorList]=useState([]);
 
   
 
@@ -85,10 +85,17 @@ function CustomerPage() {
     })
 
   }
+  const getSensorListOfUser=()=>{
+    axios.get(`${URL}/sensor/getSensorsOfUser/${userId}`).then((res)=>{
+      const data = res.data;
+      setSensorList(data.data);
+    })
+  }
   useEffect(()=>{
     console.log("userid in useeffect = "+userId)
     getUserDataFromServer(userId);
-  },[]);
+    getSensorListOfUser()
+  },[addSensor]);
 
   return (
     <Container fluid>
@@ -182,28 +189,13 @@ function CustomerPage() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Reset The Value</td>
-                <td>
-                  {" "}
-                  <Button onClick={()=>{toast.success("you clicked the button ")}} variant="secondary">sdfsdf</Button>
-                  
-                </td>
-              </tr>
-              <tr>
-                <td>Stop The sensor</td>
-                <td>
-                  {" "}
-                  <Button variant="success">Success</Button>
-                </td>
-              </tr>
-              <tr>
-                <td>Start Sensor</td>
-                <td>
-                  {" "}
-                  <Button variant="success">Success</Button>
-                </td>
-              </tr>
+            {sensorList.map((sensor) => (
+          <tr key={sensor.sensorId}>
+            <td>{sensor.sensorId}</td>
+            <td>{sensor.nameOfSensor}</td>
+            <td>{sensor.currentStatus}</td>
+          </tr>
+        ))}
             </tbody>
           </table>
         </Col>{" "}

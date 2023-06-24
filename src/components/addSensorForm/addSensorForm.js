@@ -29,7 +29,9 @@ const body={
         <Form>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Name Of Sensor</Form.Label>
-            <Form.Control type="text" placeholder="Enter Name Of Sensor" />
+            <Form.Control onChange={(e)=>{
+                setNameOfSensor(e.target.value)
+            }}   type="text" placeholder="Enter Name Of Sensor" />
           </Form.Group>
 
 
