@@ -156,12 +156,15 @@ function CustomerPage() {
         </Container>
       </Navbar>
       <Row>
-        <Col>
+        {/* <Col>
           <VolumeChart></VolumeChart>
-        </Col>
+        </Col> */}
         <Col>
           <Tank></Tank>
         </Col>
+      </Row>
+      <Row>
+      <Tank></Tank>
       </Row>
       <Row>
         {addEmployee && (
@@ -193,7 +196,7 @@ function CustomerPage() {
           <tr key={sensor.sensorId}>
             <td>{sensor.sensorId}</td>
             <td>{sensor.nameOfSensor}</td>
-            <td>{sensor.currentStatus}</td>
+            <td><Button variant="warning">{sensor.currentStatus}</Button></td>
           </tr>
         ))}
             </tbody>
