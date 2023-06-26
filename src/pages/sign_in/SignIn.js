@@ -30,9 +30,11 @@ const SignIn = () => {
       
     }else{
       console.log("user id in sign in page "+res.data.data.userId)
-      localStorage.setItem('userId', res.data.data.userId)
-      navigate('/myPage');
-
+     
+      sessionStorage.setItem('userId', res.data.data.userId)
+      // navigate(`/myPage/${res.data.data.userId}`);
+      // navigate('/myPage', { search: `userId=${res.data.data.userId}` });
+      navigate("/myPage", { state: { userId: res.data.data.userId} });
     }
   })
 

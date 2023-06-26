@@ -21,18 +21,23 @@ import Tank from "../../components/Tank";
 import AddEmployeeForm from "../../components/addCustomerForm/addCustomerForm";
 import AddCustomerForm from "../../components/addCustomerForm/addCustomerForm";
 import { ToastContainer, toast } from "react-toastify";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import AddSensorForm from "../../components/addSensorForm/addSensorForm";
 
 function CustomerPage() {
-  const location = useLocation();
+ 
   const navigate = useNavigate();
   const [addEmployee, setAddEmployee] = useState(false);
   
   const [isAdmin, setIsAdmin] = useState(true);
  const [userData,setUserData]=useState({})
- const [userId,setUserId]=useState(localStorage.getItem('userId'))
+//  const [userId,setUserId]=useState(sessionStorage.getItem('userId'))
+const [searchParams] = useSearchParams();
+// const userId = searchParams.get('userId');
+const location = useLocation();
+const { userId } = location.state;
+ 
  const [sensorList,setSensorList]=useState([]);
 
   
@@ -114,14 +119,14 @@ function CustomerPage() {
               </Navbar.Text>
               {isAdmin && (
                 <NavDropdown title="Customer" id="navbarScrollingDropdown">
-                  <NavDropdown.Item href="#action3"></NavDropdown.Item>
-                  <NavDropdown.Item href="#action4">
+                  <NavDropdown.Item ></NavDropdown.Item>
+                  <NavDropdown.Item >
                     <Button onClick={handleDataForm} variant="success">
                       Add Customer
                     </Button>
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item href="#action5">
+                  <NavDropdown.Item >
                     <Button variant="success">Remove Customer</Button>
                   </NavDropdown.Item>
                 </NavDropdown>
@@ -129,12 +134,12 @@ function CustomerPage() {
 
               {isAdmin && (
                 <NavDropdown title="Sesnor" id="navbarScrollingDropdown">
-                  <NavDropdown.Item href="#action3">
+                  <NavDropdown.Item >
                     <Button onClick={handleSensorForm} variant="success">
                       Add Sensor
                     </Button>
                   </NavDropdown.Item>
-                  <NavDropdown.Item href="#action4">
+                  <NavDropdown.Item >
                     <Button variant="success">Add Sensor</Button>
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
@@ -164,7 +169,7 @@ function CustomerPage() {
         </Col>
       </Row>
       <Row>
-      <Tank></Tank>
+      <Tank sensorId={1}></Tank>
       </Row>
       <Row>
         {addEmployee && (
