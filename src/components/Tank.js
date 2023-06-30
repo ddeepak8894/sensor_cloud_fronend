@@ -3,19 +3,26 @@ import { Button, Col, Container, ProgressBar, Row } from 'react-bootstrap';
 import { LineChart, Line, BarChart, Bar, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import "../components/Tank.css"
 import { Progress } from 'rsuite';
+import { URL } from '../config';
+import axios from 'axios';
 
 
-const Tank = () => {
+const Tank = (props) => {
   const [chartData, setChartData] = useState([]);
   const [scatterData, setScatterData] = useState([]);
   const [barData, setBarData] = useState([]);
   const [currentStatus,setCurrentStatus]= useState(false)
   const [currentValue,setCurrentValue]=useState(10)
+  const {sensorId} = props
+  let counter = 0;
 
+ 
+  
+  
   useEffect(() => {
     fetchData();
 
-    const interval = setInterval(fetchData, 2000);
+    const interval = setInterval(fetchData, 13000);
 
     return () => {
       clearInterval(interval);
@@ -23,34 +30,29 @@ const Tank = () => {
   }, []);
 
   const fetchData = async () => {
-    try {
-      const response = await fetch('http://3.111.108.14:4000/api/sensorDataStore/getSensorDetails');
-      const { data } = await response.json();
-      const filteredData = filterData(data);
-      
-      setChartData(filteredData);
-      setScatterData(generateScatterData(filteredData));
-      setBarData(generateBarData(filteredData));
-    } catch (error) {
-      console.error('Error fetching data from API:', error);
+    const body ={
+      sensorId
     }
+    axios.post(`${URL}/sensor/getSensorData`,body).then((res)=>{
+      console.log(res.data.data)
+      filterData(res.data.data);   
+    })
   };
 
   const filterData = data => {
-    const tenMinutesAgo = Date.now() - 8 * 1000; // 10 minutes in milliseconds
-    const threeSecondsAgo = Date.now() - 3 * 1000; // 3 seconds in milliseconds
+    const tenMinutesAgo = Date.now() - 10 * 1000; // 10 minutes in milliseconds
+    const threeSecondsAgo = Date.now() - 6 * 1000; // 3 seconds in milliseconds
 
-    const filteredData = data.filter(item => new Date(item.sampleTakenAt).getTime() >= tenMinutesAgo);
-    const valueArray=data.map(e=>({value: e.data}))
-  
+    const filteredData = data.filter(e => new Date(e.lastUpdatedAt).getTime()>= tenMinutesAgo); 
     const hasSamplesFromLastThreeSeconds = filteredData.some(
-      item => new Date(item.sampleTakenAt).getTime() >= threeSecondsAgo
+      item => new Date(item.lastUpdatedAt).getTime() >= threeSecondsAgo
     );
-    const latestValue = valueArray[valueArray.length-1].value/20;
+  
+   
 
     setCurrentStatus(hasSamplesFromLastThreeSeconds);
-    if (hasSamplesFromLastThreeSeconds){
-        setCurrentValue(latestValue*100);
+    if (hasSamplesFromLastThreeSeconds ){
+        setCurrentValue(data[data.length -1].data);
     }else{
         setCurrentValue(0)
     }
@@ -67,30 +69,6 @@ const Tank = () => {
       }));
   };
 
-  const generateScatterData = data => {
-    // Generate scatter plot data based on the line chart data
-    return data.map(item => ({
-      x: item.time,
-      y: item.value,
-    }));
-  };
-
-  const generateBarData = data => {
-    // Generate bar chart data based on the line chart data
-    return data.map(item => ({
-      time: item.time,
-      value: item.value*1000,
-    }));
-  };
-
-  const handleClearData = async () => {
-    try {
-      await fetch('http://3.111.108.14:4000/api/sensorDataStore/deleteAll', { method: 'GET' });
-      fetchData();
-    } catch (error) {
-      console.error('Error clearing data:', error);
-    }
-  };
 
   return (
     

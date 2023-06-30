@@ -32,15 +32,12 @@ function CustomerPage() {
   
   const [isAdmin, setIsAdmin] = useState(true);
  const [userData,setUserData]=useState({})
-//  const [userId,setUserId]=useState(sessionStorage.getItem('userId'))
+
 const [searchParams] = useSearchParams();
-// const userId = searchParams.get('userId');
 const location = useLocation();
 const { userId } = location.state;
- 
- const [sensorList,setSensorList]=useState([]);
+const [sensorList,setSensorList]=useState([]);
 
-  
 
   const handleDataForm = () => {
     setAddEmployee(!addEmployee);
@@ -80,6 +77,9 @@ const { userId } = location.state;
     axios.post(`${URL}/user/getUser`,body).then((res)=>{
       console.log(res.data.data)
       setUserData(res.data.data)
+      if(res.data.data.role=="admin"){
+        setIsAdmin(true)
+      }
       if(res.data.data=="USER_DOES_NOT_EXIST"){
         navigate("/")
        toast.warning("please login again")
@@ -160,26 +160,28 @@ const { userId } = location.state;
           </Navbar.Collapse>
         </Container>
       </Navbar>
+     
+      {
+        sensorList.map((e)=>{
+          return (
+            <Row>
+                <Tank sensorId={e.sensorId}/>
+            </Row>
+          )
+          
+          
+        })
+      }
       <Row>
-        {/* <Col>
-          <VolumeChart></VolumeChart>
-        </Col> */}
-        <Col>
-          <Tank></Tank>
-        </Col>
-      </Row>
-      <Row>
-      <Tank sensorId={1}></Tank>
-      </Row>
-      <Row>
-        {addEmployee && (
+        {addEmployee && isAdmin && (
           <Col
             style={{ backgroundColor: "white", borderRadius: 10, margin: 10 }}
           >
             <AddCustomerForm setAddEmployee={setAddEmployee}></AddCustomerForm>
           </Col>
         )}
-        {addSensor && (
+
+        {addSensor && isAdmin && (
              <Col style={{ backgroundColor: "white", borderRadius: 10, margin: 10 }}>
               <AddSensorForm setAddSensor={setAddSensor} userId={userId}></AddSensorForm>
              </Col>
