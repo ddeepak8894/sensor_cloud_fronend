@@ -13,7 +13,7 @@ const Tank = (props) => {
   const [barData, setBarData] = useState([]);
   const [currentStatus,setCurrentStatus]= useState(false)
   const [currentValue,setCurrentValue]=useState(10)
-  const {sensorId} = props
+  const {sensorId,sensorName} = props
   let counter = 0;
 
  
@@ -27,7 +27,7 @@ const Tank = (props) => {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [sensorId]);
 
   const fetchData = async () => {
     const body ={
@@ -40,8 +40,8 @@ const Tank = (props) => {
   };
 
   const filterData = data => {
-    const tenMinutesAgo = Date.now() - 10 * 1000; // 10 minutes in milliseconds
-    const threeSecondsAgo = Date.now() - 6 * 1000; // 3 seconds in milliseconds
+    const tenMinutesAgo = Date.now() - 1000 * 1000; // 10 minutes in milliseconds
+    const threeSecondsAgo = Date.now() - 600 * 1000; // 3 seconds in milliseconds
 
     const filteredData = data.filter(e => new Date(e.lastUpdatedAt).getTime()>= tenMinutesAgo); 
     const hasSamplesFromLastThreeSeconds = filteredData.some(
@@ -85,7 +85,7 @@ const Tank = (props) => {
           
   <Col>
     {
-        currentStatus ? <h1 style={{color:"green"}}> <span className="sr-only">{(currentValue * 200).toFixed(2)} Liters Water Present In Tank</span></h1> :<h1 style={{color:"red"}}>Sensor at Location is Off</h1>
+        currentStatus ? <h1 style={{color:"green"}}> <span className="sr-only">{(currentValue * 200).toFixed(2)} Liters Water Present In Tank</span></h1> :<h1 style={{color:"red"}}>{sensorName} at Location is Off{sensorId}</h1>
     }
   </Col>
      

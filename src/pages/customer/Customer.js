@@ -21,24 +21,28 @@ import Tank from "../../components/Tank";
 import AddEmployeeForm from "../../components/addCustomerForm/addCustomerForm";
 import AddCustomerForm from "../../components/addCustomerForm/addCustomerForm";
 import { ToastContainer, toast } from "react-toastify";
-import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import axios from "axios";
 import AddSensorForm from "../../components/addSensorForm/addSensorForm";
 
 function CustomerPage() {
- 
   const navigate = useNavigate();
   const [addEmployee, setAddEmployee] = useState(false);
-  
+
   const [isAdmin, setIsAdmin] = useState(true);
- const [userData,setUserData]=useState({})
+  const [userData, setUserData] = useState({});
 
-const [searchParams] = useSearchParams();
-const location = useLocation();
-const { userId } = location.state;
-const [sensorList,setSensorList]=useState([]);
-
-
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const { userId } = location.state;
+  const [sensorList, setSensorList] = useState([]);
+  const [sensorId,setSensorId]=useState(1)
+  const [sensorName,setSensorName]=useState("")
   const handleDataForm = () => {
     setAddEmployee(!addEmployee);
   };
@@ -68,39 +72,37 @@ const [sensorList,setSensorList]=useState([]);
       console.error("Error clearing data:", error);
     }
   };
-  const getUserDataFromServer=(userId)=>{
-    console.log("user id in get user data from server "+userId)
+  const getUserDataFromServer = (userId) => {
+    console.log("user id in get user data from server " + userId);
     const body = {
-      userId
-    }
-    console.log("user in body "+userId)
-    axios.post(`${URL}/user/getUser`,body).then((res)=>{
-      console.log(res.data.data)
-      setUserData(res.data.data)
-      if(res.data.data.role=="admin"){
-        setIsAdmin(true)
+      userId,
+    };
+    console.log("user in body " + userId);
+    axios.post(`${URL}/user/getUser`, body).then((res) => {
+      console.log(res.data.data);
+      setUserData(res.data.data);
+      if (res.data.data.role == "admin") {
+        setIsAdmin(true);
       }
-      if(res.data.data=="USER_DOES_NOT_EXIST"){
-        navigate("/")
-       toast.warning("please login again")
-        
-      }else{
-       
+      if (res.data.data == "USER_DOES_NOT_EXIST") {
+        navigate("/");
+        toast.warning("please login again");
+      } else {
       }
-    })
-
-  }
-  const getSensorListOfUser=()=>{
-    axios.get(`${URL}/sensor/getSensorsOfUser/${userId}`).then((res)=>{
+    });
+  };
+  const getSensorListOfUser = () => {
+    axios.get(`${URL}/sensor/getSensorsOfUser/${userId}`).then((res) => {
       const data = res.data;
       setSensorList(data.data);
-    })
-  }
-  useEffect(()=>{
-    console.log("userid in useeffect = "+userId)
+    });
+  };
+
+  useEffect(() => {
+    console.log("userid in useeffect = " + userId);
     getUserDataFromServer(userId);
-    getSensorListOfUser()
-  },[addSensor]);
+    getSensorListOfUser();
+  }, [addSensor]);
 
   return (
     <Container fluid>
@@ -119,14 +121,14 @@ const [sensorList,setSensorList]=useState([]);
               </Navbar.Text>
               {isAdmin && (
                 <NavDropdown title="Customer" id="navbarScrollingDropdown">
-                  <NavDropdown.Item ></NavDropdown.Item>
-                  <NavDropdown.Item >
+                  <NavDropdown.Item></NavDropdown.Item>
+                  <NavDropdown.Item>
                     <Button onClick={handleDataForm} variant="success">
                       Add Customer
                     </Button>
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item >
+                  <NavDropdown.Item>
                     <Button variant="success">Remove Customer</Button>
                   </NavDropdown.Item>
                 </NavDropdown>
@@ -134,12 +136,12 @@ const [sensorList,setSensorList]=useState([]);
 
               {isAdmin && (
                 <NavDropdown title="Sesnor" id="navbarScrollingDropdown">
-                  <NavDropdown.Item >
+                  <NavDropdown.Item>
                     <Button onClick={handleSensorForm} variant="success">
                       Add Sensor
                     </Button>
                   </NavDropdown.Item>
-                  <NavDropdown.Item >
+                  <NavDropdown.Item>
                     <Button variant="success">Add Sensor</Button>
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
@@ -155,107 +157,42 @@ const [sensorList,setSensorList]=useState([]);
                 aria-label="Search"
               />
               <Button variant="outline-success">Search</Button>
-              <Button onClick={()=>{navigate("/logout")}} variant="primary">Logout</Button>
+              <Button
+                onClick={() => {
+                  navigate("/logout");
+                }}
+                variant="primary"
+              >
+                Logout
+              </Button>
             </Form>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-     
-      {
-        sensorList.map((e)=>{
-          return (
-            <Row>
-                <Tank sensorId={e.sensorId}/>
-            </Row>
-          )
-          
-          
-        })
-      }
       <Row>
-        {addEmployee && isAdmin && (
-          <Col
-            style={{ backgroundColor: "white", borderRadius: 10, margin: 10 }}
-          >
-            <AddCustomerForm setAddEmployee={setAddEmployee}></AddCustomerForm>
-          </Col>
-        )}
-
-        {addSensor && isAdmin && (
-             <Col style={{ backgroundColor: "white", borderRadius: 10, margin: 10 }}>
-              <AddSensorForm setAddSensor={setAddSensor} userId={userId}></AddSensorForm>
-             </Col>
+        <Col md="auto">
+          <div className="sidebarSensorList">
+             ̰
+            <Stack gap={3}>
+              
+              
+              {sensorList.map((e) => {
+              return<Button onClick={()=>{
+                setSensorId(e.sensorId) 
+  
+                setSensorName(e.nameOfSensor.split("com-")[1])
+              }} variant="warning">{e.nameOfSensor.split("com-")[1]}</Button>;
+            })}
+            </Stack>
             
-        )}
-      </Row>
-      <Row>
-        <Col style={{ backgroundColor: "white", borderRadius: 10 }}>
-          <table style={{ borderRadius: 20 }} className="table table-hover">
-            <thead>
-              <tr>
-                <th scope="col">SensorId</th>
-                <th scope="col">Name Of Sensor</th>
-                <th scope="col">Current Status</th>
-              </tr>
-            </thead>
-            <tbody>
-            {sensorList.map((sensor) => (
-          <tr key={sensor.sensorId}>
-            <td>{sensor.sensorId}</td>
-            <td>{sensor.nameOfSensor}</td>
-            <td><Button variant="warning">{sensor.currentStatus}</Button></td>
-          </tr>
-        ))}
-            </tbody>
-          </table>
-        </Col>{" "}
-        <Col
-          className="boxClass"
-          style={{ backgroundColor: "white", borderRadius: 10, margin: 10 }}
-        >
-          <table className="table table-hover ">
-            <thead>
-              <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Handle</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Reset The Chart</td>
-                <td>
-                  {" "}
-                  <Button onClick={handleClearData} variant="danger">
-                    Click to reset
-                  </Button>
-                </td>
-              </tr>
-              <tr>
-                <td>Start The sensor</td>
-                <td>
-                  {" "}
-                  <Button variant="success">click to start..</Button>
-                  <Badge pill bg="warning" text="dark">
-                    Warning
-                  </Badge>
-                </td>
-              </tr>
-              <tr>
-                <td>Stop Sensor</td>
-                <td>
-                  {" "}
-                  <Button variant="danger">Click to Stop</Button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          </div>
         </Col>
-        <Stack gap={3}>
-          <div className="p-2">First item</div>
-          <div className="p-2">Second item</div>
-          <div className="p-2">Third item</div>
-        </Stack>
-         
+        <Col>
+          <div className="tank">
+             <Tank sensorId={sensorId} sensorName={sensorName} />;
+          
+          </div>
+        </Col>
       </Row>
     </Container>
   );
