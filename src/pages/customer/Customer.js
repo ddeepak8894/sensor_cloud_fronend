@@ -42,10 +42,10 @@ function CustomerPage() {
   const location = useLocation();
   const { userId } = location.state;
   const [sensorList, setSensorList] = useState([]);
-  const [sensorId,setSensorId]=useState(1)
-  const [sensorName,setSensorName]=useState("")
-  const [zoomValue,setZoomValue]=useState(0)
-  
+  const [sensorId, setSensorId] = useState(1);
+  const [sensorName, setSensorName] = useState("");
+  const [zoomValue, setZoomValue] = useState(5);
+  const [mapshowFlaf, setMapShowFlag] = useState(true);
   const handleDataForm = () => {
     setAddEmployee(!addEmployee);
   };
@@ -98,8 +98,8 @@ function CustomerPage() {
     axios.get(`${URL}/sensor/getSensorsOfUser/${userId}`).then((res) => {
       const data = res.data;
       setSensorList(data.data);
-      setSensorId(data.data[0].sensorId)
-      setSensorName(data.data[0].nameOfSensor)
+      setSensorId(data.data[0].sensorId);
+      setSensorName(data.data[0].nameOfSensor);
     });
   };
 
@@ -176,42 +176,51 @@ function CustomerPage() {
       </Navbar>
       <Row>
         <Col md="auto">
-          <div className="sidebarSensorList">
-             ̰
-            <Stack gap={3}>
-              
-              
+          <div>
+            <Stack
+              style={{
+                borderColor: "black",
+                borderStyle: "solid",
+                padding: "5px",
+                borderRadius: "10px",
+              }}
+              direction="horizontal"
+              gap={3}
+            >
               {sensorList.map((e) => {
-              return<Button onClick={()=>{
-                setSensorId(e.sensorId) 
-                setZoomValue(3)
-                setSensorName(e.nameOfSensor.split("com-")[1])
-              }} variant="warning">{e.nameOfSensor.split("com-")[1]}</Button>;
-            })}
+                return (
+                  <Button
+                    onClick={() => {
+                      setSensorId(e.sensorId);
+                      setZoomValue(5);
+                      setMapShowFlag(false);
+                      setSensorName(e.nameOfSensor.split("com-")[1]);
+                    }}
+                    variant={e.currentStatus == "off" ? "danger":"success"}
+                  >
+                    {e.nameOfSensor.split("com-")[1]}
+                  </Button>
+                );
+              })}
             </Stack>
-            
           </div>
         </Col>
-       
-        <Col>
-        <div className="tank">
-      <div>
-        {/* Use the anchor tag to open the link in a new page */}
-   
-      </div>
-      {/* Your Tank component */}
-      <Tank sensorId={sensorId} sensorName={sensorName} />
-      <a href={`/sensorMap?sensorId=${sensorId}`} target="_blank" rel="noopener noreferrer">
-          <Button>
-            Click to see location of {sensorName}
-          </Button>
-        </a>
-    </div>
-        </Col>
-      
-
-        
-  
+        <Row>
+          <Col>
+            <div className="tank">
+              <Tank sensorId={sensorId} sensorName={sensorName} />;
+            </div>
+          </Col>
+          <Col>
+            <MapComponent
+             
+              sensorId={sensorId}
+              sensorName={sensorName}
+              zoomValue={zoomValue}
+              
+            />
+          </Col>
+        </Row>
       </Row>
     </Container>
   );
