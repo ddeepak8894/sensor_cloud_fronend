@@ -1,0 +1,58 @@
+import React, { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import axios from 'axios';
+import { URL } from '../../config';
+import { useLocation } from 'react-router';
+
+const MapComponent = (props) => {
+  const [sensorData, setSensorData] = useState(null);
+  const urlParams = new URLSearchParams(window.location.search);
+  const sensorId = urlParams.get('sensorId');
+  const {sensorName,zoomValue} = props
+
+  const getPostitionParameterOfSensor =()=>{
+    axios.post(`${URL}/sensor/getSensorPosition`, {
+        sensorId: sensorId
+      })
+        .then((response) => {
+          // Assuming the API response contains sensor data in the 'data' field
+          setSensorData(response.data.data);
+          const data = response.data.data;
+          console.log(data.latitudeLong)
+          console.log("longitude below and latitude ablove")
+          console.log()
+        })
+        .catch((error) => {
+          console.error('Error fetching sensor data:', error);
+        });
+  }
+
+  useEffect(() => {
+    // Fetch sensor data from the API endpoint
+    console.log("***************************sensorId changed")
+    getPostitionParameterOfSensor();
+  }, [sensorId]);
+
+  if (!sensorData) {
+    // Loading state or handle errors if data is not available
+    return <div>Loading...</div>;
+  }
+
+  const { latitudeLong, longitudeLong, nameOfSensor } = sensorData;
+
+  return (
+    
+<MapContainer key={sensorId} center={[latitudeLong,longitudeLong]} zoom={16} style={{ height: '800px' }}>
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution="&copy; OpenStreetMap contributors"
+      />
+      <Marker position={[latitudeLong,longitudeLong]}>
+        <Popup>{nameOfSensor}</Popup>
+      </Marker>
+    </MapContainer>
+
+  );
+};
+
+export default MapComponent;

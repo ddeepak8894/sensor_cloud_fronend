@@ -29,6 +29,7 @@ import {
 } from "react-router-dom";
 import axios from "axios";
 import AddSensorForm from "../../components/addSensorForm/addSensorForm";
+import MapComponent from "../../components/Map/MapComponent";
 
 function CustomerPage() {
   const navigate = useNavigate();
@@ -43,6 +44,8 @@ function CustomerPage() {
   const [sensorList, setSensorList] = useState([]);
   const [sensorId,setSensorId]=useState(1)
   const [sensorName,setSensorName]=useState("")
+  const [zoomValue,setZoomValue]=useState(0)
+  
   const handleDataForm = () => {
     setAddEmployee(!addEmployee);
   };
@@ -95,6 +98,8 @@ function CustomerPage() {
     axios.get(`${URL}/sensor/getSensorsOfUser/${userId}`).then((res) => {
       const data = res.data;
       setSensorList(data.data);
+      setSensorId(data.data[0].sensorId)
+      setSensorName(data.data[0].nameOfSensor)
     });
   };
 
@@ -179,7 +184,7 @@ function CustomerPage() {
               {sensorList.map((e) => {
               return<Button onClick={()=>{
                 setSensorId(e.sensorId) 
-  
+                setZoomValue(3)
                 setSensorName(e.nameOfSensor.split("com-")[1])
               }} variant="warning">{e.nameOfSensor.split("com-")[1]}</Button>;
             })}
@@ -187,12 +192,26 @@ function CustomerPage() {
             
           </div>
         </Col>
+       
         <Col>
-          <div className="tank">
-             <Tank sensorId={sensorId} sensorName={sensorName} />;
-          
-          </div>
+        <div className="tank">
+      <div>
+        {/* Use the anchor tag to open the link in a new page */}
+   
+      </div>
+      {/* Your Tank component */}
+      <Tank sensorId={sensorId} sensorName={sensorName} />
+      <a href={`/sensorMap?sensorId=${sensorId}`} target="_blank" rel="noopener noreferrer">
+          <Button>
+            Click to see location of {sensorName}
+          </Button>
+        </a>
+    </div>
         </Col>
+      
+
+        
+  
       </Row>
     </Container>
   );
