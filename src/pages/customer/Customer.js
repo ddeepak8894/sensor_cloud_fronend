@@ -54,6 +54,7 @@ function CustomerPage() {
   const [modalShow, setModalShow] = useState(false);
   const [deletedSensorName, setDeletedSensorName] = useState("");
   const [pageRereshToggle, setPageRefreshToggle] = useState(true);
+  const [showTankMap,setShowTankMap]=useState(false)
   const handleDataForm = () => {
     setAddEmployee(!addEmployee);
   };
@@ -108,17 +109,31 @@ function CustomerPage() {
   const getSensorListOfUser = () => {
     axios.get(`${URL}/sensor/getSensorsOfUser/${userId}`).then((res) => {
       const data = res.data;
-      setSensorList(data.data);
-      setSensorId(data.data[0].sensorId);
-      setSensorName(data.data[0].nameOfSensor.split("com-")[1]);
+      console.log(data.data)
+  
+      
+      if(data.data.length > 0){
+        setShowTankMap(true)
+        setSensorList(data.data);
+        setSensorId(data.data[0].sensorId);
+        setSensorName(data.data[0].nameOfSensor.split("com-")[1]);
+      }else{
+        setShowTankMap(false)
+      }
+      
     });
   };
 
   const handleDeleteSensor = (sensorId, nameOfSensor) => {
     // Show a confirmation alert before deleting
 
-    if (!nameOfSensor.includes(deletedSensorName)) {
+    if (!nameOfSensor.includes(deletedSensorName) || sensorList.length ==1) {
       // User canceled the deletion, do nothing
+      if(sensorList.length==1){
+        toast.warning("can not delete all sensors", {
+          position: toast.POSITION.TOP_CENTER,
+        })
+      }
       toast.warning("sensor not deleted", {
         position: toast.POSITION.TOP_CENTER,
       });
@@ -152,6 +167,7 @@ function CustomerPage() {
       });
   };
   useEffect(() => {
+
     console.log("userid in useeffect = " + userId);
     getUserDataFromServer(userId);
     getSensorListOfUser();
@@ -159,6 +175,7 @@ function CustomerPage() {
 
   return (
     <Container fluid>
+      
       <Navbar bg="dark" expand="sm" className="bg-body-tertiary">
         <Container fluid>
           <Navbar.Brand href="#">Additional Functions</Navbar.Brand>
@@ -321,7 +338,8 @@ function CustomerPage() {
         <Col >
           <Row>
             <div className="tank">
-              <Tank sensorId={sensorId} sensorName={sensorName} />;
+              {showTankMap ? <Tank sensorId={sensorId} sensorName={sensorName} />: <h1>Sensor is not added ... pls add it</h1> }
+              ;
             </div>
           </Row>
           <Row>
@@ -333,12 +351,13 @@ function CustomerPage() {
            
           </Row>
         </Col>
-        <Col>
-          <MapComponent
+        <Col >
+        {showTankMap?   <MapComponent
             sensorId={sensorId}
             sensorName={sensorName}
             zoomValue={zoomValue}
-          />
+          />:<h1>Sensor is not added ... pls add it </h1>}
+        
         </Col>
       </Row>
     </Container>
