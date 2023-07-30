@@ -5,8 +5,11 @@
     background-color: rgb(118, 94, 14);
     padding: 4px;
 }
-.tank{
-    width: 100%;
+
+.addSensorForm{
+    border-color: black;
+    border-style: solid;
+    border-radius: 8px;
 }
 
 
