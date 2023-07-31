@@ -44,7 +44,7 @@ const MapComponent = (props) => {
         key={sensorId}
         center={[ latitudeLong,longitudeLong]}
         zoom={zoomValue}
-        style={{ height: "500px", borderStyle: "solid", borderColor: "black" }}
+        style={{ minHeight:"15cm",minWidth:"6cm", borderStyle: "solid", borderColor: "black" }}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
