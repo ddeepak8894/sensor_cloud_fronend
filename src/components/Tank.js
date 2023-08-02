@@ -76,7 +76,7 @@ const Tank = (props) => {
       
       <div className="charts">
         <Row> {
-            currentStatus &&  <Col>    <div className="progress progress-bar-vertical" style={{backgroundColor:"orange",height:"90mm",width:"80mm",border:"3px",borderStyle:"solid"}}>
+            currentStatus &&  <Col>    <div className="progress progress-bar-vertical" style={{backgroundColor:"orange",minHeight:"90mm",minWidth:"5cm",border:"3px",borderStyle:"solid"}}>
             <div className="progress-bar progress-bar-success progress-bar-striped active"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style={{height: `${currentValue}%`,width:"100mm"}}>
               <span className="sr-only">{(currentValue * 200).toFixed(2)}Liters</span>
             </div>
