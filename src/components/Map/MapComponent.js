@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import axios from "axios";
 import { URL } from "../../config";
-import "../Map/Map.css"
+import "../Map/Map.css";
 import { Button } from "react-bootstrap";
 
 const MapComponent = (props) => {
@@ -10,6 +10,8 @@ const MapComponent = (props) => {
   const [sensorData, setSensorData] = useState(null);
   const [isMonitoring, setIsMonitoring] = useState(false);
   const mapRef = useRef(null);
+  const monitoringTimer = useRef(null);
+  const monitoringDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   const getPostitionParameterOfSensor = () => {
     axios
@@ -30,8 +32,16 @@ const MapComponent = (props) => {
       // Fetch sensor data every 3 seconds while monitoring is active
       const interval = setInterval(getPostitionParameterOfSensor, 3000);
 
-      // Clean up the interval when monitoring is stopped or when the 'sensorId' changes
-      return () => clearInterval(interval);
+      // Set a timer to automatically stop monitoring after the specified duration
+      monitoringTimer.current = setTimeout(() => {
+        setIsMonitoring(false);
+      }, monitoringDuration);
+
+      // Clean up the interval and timer when monitoring is stopped or when the 'sensorId' changes
+      return () => {
+        clearInterval(interval);
+        clearTimeout(monitoringTimer.current);
+      };
     }
   }, [isMonitoring, sensorId]);
 
@@ -55,7 +65,7 @@ const MapComponent = (props) => {
   };
 
   const handleMonitoring = () => {
-    setIsMonitoring(!isMonitoring);
+    setIsMonitoring(true);
   };
 
   const handleStopMonitoring = () => {
@@ -94,12 +104,11 @@ const MapComponent = (props) => {
 
       {/* Apply the CSS class based on the monitoring state */}
       <Button
-        variant={isMonitoring ?  "danger":"success" }
-        onClick={handleMonitoring}
-      >{isMonitoring? "Monitoring continuously":"Not Monitoring continuosly"}
-        
+        variant={isMonitoring ? "danger" : "success"}
+        onClick={isMonitoring ? handleStopMonitoring : handleMonitoring}
+      >
+        {isMonitoring ? "Stop Monitoring" : "Start Continuous Monitoring"}
       </Button>
-  
     </div>
   );
 };
