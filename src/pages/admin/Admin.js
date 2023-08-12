@@ -13,11 +13,14 @@ import { useNavigate } from "react-router-dom";
 import "../admin/Admin.css";
 import axios from "axios";
 import { URL } from "../../config";
+import AddCustomerForm from "../../components/addCustomerForm/addCustomerForm";
 
 function AdminPage() {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(true);
   const [users,setUsers]=useState([])
+  const [addEmployee, setAddEmployee] = useState(false);
+
 
   const getListOfUser = () => {
     axios.get(`${URL}/user/getAllUsers`).then((res) => {
@@ -26,6 +29,7 @@ function AdminPage() {
       console.log(data.data)
      });
   };
+
 
   useEffect(()=>{
     getListOfUser()
@@ -45,7 +49,9 @@ function AdminPage() {
             >
                 <Stack direction="horizontal" gap={2}>
                     <Button variant="outline-success">Signed in as: <a href="#login">Krushna</a></Button>
-                    <Button variant="success">Add New Customer</Button>
+                    <Button variant="success" onClick={()=>{
+                      setAddEmployee(true)
+                    }}>Add New Customer</Button>
 
                 </Stack>
             </Nav>
@@ -70,6 +76,7 @@ function AdminPage() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      {addEmployee && <AddCustomerForm setAddEmployee={setAddEmployee}/>}
       <Table striped bordered hover variant="light">
       <thead>
         <tr>
@@ -83,9 +90,8 @@ function AdminPage() {
       {users.map(user => (
           <tr key={user.userId}>
             <td>{user.userId}</td>
-            <td>{user.firstName}</td>
-            <td>{user.lastName}</td>
-            <td>{user.email}</td>
+            <td>{user.fullName}</td>
+            <td>{user.nameOfSociety}</td>
             <td>{user.numberOfSensors}</td>
           </tr>
         ))}

@@ -48,7 +48,7 @@ function CustomerPage() {
   const [sensorList, setSensorList] = useState([]);
   const [sensorId, setSensorId] = useState(1);
   const [sensorName, setSensorName] = useState("");
-  const [zoomValue, setZoomValue] = useState(5);
+  const [zoomValue, setZoomValue] = useState(14);
   const [mapshowFlaf, setMapShowFlag] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [modalShow, setModalShow] = useState(false);
@@ -349,6 +349,9 @@ function CustomerPage() {
                 <AddSensorForm pageRereshToggle={pageRereshToggle} setPageRefreshToggle={setPageRefreshToggle} setAddSensor={setAddSensor} userId={userId} /> </div>
               )}
            
+          </Row>
+          <Row>
+            
           </Row>
         </Col>
         <Col >

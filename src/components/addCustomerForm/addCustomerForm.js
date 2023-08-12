@@ -17,7 +17,7 @@ function AddCustomerForm(props) {
   const [cellNo, setCellNo] = useState('1234578590');
   const [securityQuestion, setSecurityQuestion] = useState('name of pet?');
   const [securityAnswer, setSecurityAnswer] = useState('harry');
-
+  const [nameOfSociety,setNameOfSociety] = useState("")
 
 
 //  methods
@@ -56,7 +56,7 @@ const sendDataToServer=()=>{
       return;
     }
   const body={
-    firstName,lastName,email,password,role,cellNo,securityAnswer,securityQuestion
+    firstName,lastName,email,password,role,cellNo,securityAnswer,securityQuestion,nameOfSociety
   }
   axios.post(`${URL}/user/addUser`,body).then((res)=>{
     if(res.data.data=="USER_ADDED_SUCCESSFULLY"){
@@ -87,6 +87,12 @@ const sendDataToServer=()=>{
         <Form.Label>Last Name<span style={{color:"red"}} >*</span></Form.Label>
         <Form.Control
         onChange={(e) => setLastName(e.target.value)}
+        type="text" placeholder="Enter last name" />
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="formBasicFirstname2">
+        <Form.Label>Name Of Society<span style={{color:"red"}} >*</span></Form.Label>
+        <Form.Control
+        onChange={(e) => setNameOfSociety(e.target.value)}
         type="text" placeholder="Enter last name" />
       </Form.Group>
 
