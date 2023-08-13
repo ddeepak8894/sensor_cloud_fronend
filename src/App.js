@@ -8,6 +8,8 @@ import SideBar from './components/SideBar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LogoutPage from './components/logoutPage/logoutPage';
+import MapComponent from './components/Map/MapComponent';
+import AdminPage from './pages/admin/Admin';
 
 
 const App = () => (
@@ -19,7 +21,9 @@ const App = () => (
       <Route path="/" element={<SignIn />} />
       <Route path="/signIn" element={<NavigateTest />} />
       <Route path="/myPage" element={<CustomerPage />} />
+      <Route path="/admin" element={<AdminPage />} />
       <Route path="/logout" element={<LogoutPage />} />
+      <Route path="/sensorMap" element={<MapComponent />} />
 
     </Routes>
     <ToastContainer  />

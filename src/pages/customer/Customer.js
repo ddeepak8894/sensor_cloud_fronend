@@ -5,12 +5,15 @@ import {
   Col,
   Container,
   Form,
+  Modal,
   Nav,
   NavDropdown,
   Navbar,
   ProgressBar,
   Row,
   Stack,
+  Table,
+  Toast,
 } from "react-bootstrap";
 import TestChart from "../../components/TestChart";
 import VolumeChart from "../../components/VolumeChart";
@@ -21,24 +24,37 @@ import Tank from "../../components/Tank";
 import AddEmployeeForm from "../../components/addCustomerForm/addCustomerForm";
 import AddCustomerForm from "../../components/addCustomerForm/addCustomerForm";
 import { ToastContainer, toast } from "react-toastify";
-import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import axios from "axios";
 import AddSensorForm from "../../components/addSensorForm/addSensorForm";
+import MapComponent from "../../components/Map/MapComponent";
+import DeleteModal from "../../components/DeleteModal/DeleteModal";
 
 function CustomerPage() {
- 
   const navigate = useNavigate();
   const [addEmployee, setAddEmployee] = useState(false);
-  
+
   const [isAdmin, setIsAdmin] = useState(true);
- const [userData,setUserData]=useState({})
+  const [userData, setUserData] = useState({});
 
-const [searchParams] = useSearchParams();
-const location = useLocation();
-const { userId } = location.state;
-const [sensorList,setSensorList]=useState([]);
-
-
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const { userId } = location.state;
+  const [sensorList, setSensorList] = useState([]);
+  const [sensorId, setSensorId] = useState(1);
+  const [sensorName, setSensorName] = useState("");
+  const [zoomValue, setZoomValue] = useState(14);
+  const [mapshowFlaf, setMapShowFlag] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [modalShow, setModalShow] = useState(false);
+  const [deletedSensorName, setDeletedSensorName] = useState("");
+  const [pageRereshToggle, setPageRefreshToggle] = useState(true);
+  const [showTankMap,setShowTankMap]=useState(false)
   const handleDataForm = () => {
     setAddEmployee(!addEmployee);
   };
@@ -56,7 +72,10 @@ const [sensorList,setSensorList]=useState([]);
       console.error("Error fetching data from API:", error);
     }
   };
-
+  // Filter the sensorList based on the searchQuery
+  const filteredSensors = sensorList.filter((sensor) =>
+    sensor.nameOfSensor.includes(searchQuery)
+  );
   const handleClearData = async () => {
     try {
       const response = await fetch(
@@ -68,42 +87,95 @@ const [sensorList,setSensorList]=useState([]);
       console.error("Error clearing data:", error);
     }
   };
-  const getUserDataFromServer=(userId)=>{
-    console.log("user id in get user data from server "+userId)
+  const getUserDataFromServer = (userId) => {
+    console.log("user id in get user data from server " + userId);
     const body = {
-      userId
-    }
-    console.log("user in body "+userId)
-    axios.post(`${URL}/user/getUser`,body).then((res)=>{
-      console.log(res.data.data)
-      setUserData(res.data.data)
-      if(res.data.data.role=="admin"){
-        setIsAdmin(true)
+      userId,
+    };
+    console.log("user in body " + userId);
+    axios.post(`${URL}/user/getUser`, body).then((res) => {
+      console.log(res.data.data);
+      setUserData(res.data.data);
+      if (res.data.data.role == "admin") {
+        setIsAdmin(true);
       }
-      if(res.data.data=="USER_DOES_NOT_EXIST"){
-        navigate("/")
-       toast.warning("please login again")
-        
-      }else{
-       
+      if (res.data.data == "USER_DOES_NOT_EXIST") {
+        navigate("/");
+        toast.warning("please login again");
+      } else {
       }
-    })
-
-  }
-  const getSensorListOfUser=()=>{
-    axios.get(`${URL}/sensor/getSensorsOfUser/${userId}`).then((res)=>{
+    });
+  };
+  const getSensorListOfUser = () => {
+    axios.get(`${URL}/sensor/getSensorsOfUser/${userId}`).then((res) => {
       const data = res.data;
-      setSensorList(data.data);
-    })
-  }
-  useEffect(()=>{
-    console.log("userid in useeffect = "+userId)
+      console.log(data.data)
+  
+      
+      if(data.data.length > 0){
+        setShowTankMap(true)
+        setSensorList(data.data);
+        setSensorId(data.data[0].sensorId);
+        setSensorName(data.data[0].nameOfSensor.split("com-")[1]);
+      }else{
+        setShowTankMap(false)
+      }
+      
+    });
+  };
+
+  const handleDeleteSensor = (sensorId, nameOfSensor) => {
+    // Show a confirmation alert before deleting
+
+    if (!nameOfSensor.includes(deletedSensorName) || sensorList.length ==1) {
+      // User canceled the deletion, do nothing
+      if(sensorList.length==1){
+        toast.warning("can not delete all sensors", {
+          position: toast.POSITION.TOP_CENTER,
+        })
+      }
+      toast.warning("sensor not deleted", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      return;
+    }
+    // Make an API call to delete the sensor
+    axios
+      .post(`${URL}/sensor/deleteSensor`, {
+        sensorId: sensorId,
+        userId: userId,
+        nameOfSensor: sensorName,
+        // Assuming you have the user's ID stored somewhere
+      })
+      .then((response) => {
+        // Handle the response from the server, e.g., show a success message
+        console.log("Sensor deleted successfully:", response.data);
+        if (response.data.data == "SENSOR_DELETED_SUCCESS") {
+          toast.success("sensor deleted success", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+          setPageRefreshToggle(!pageRereshToggle);
+        } else {
+          toast.warning("sensor not deleted", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+        }
+      })
+      .catch((error) => {
+        // Handle errors here
+        console.error("Error deleting sensor:", error);
+      });
+  };
+  useEffect(() => {
+
+    console.log("userid in useeffect = " + userId);
     getUserDataFromServer(userId);
-    getSensorListOfUser()
-  },[addSensor]);
+    getSensorListOfUser();
+  }, [pageRereshToggle]);
 
   return (
     <Container fluid>
+      
       <Navbar bg="dark" expand="sm" className="bg-body-tertiary">
         <Container fluid>
           <Navbar.Brand href="#">Additional Functions</Navbar.Brand>
@@ -119,31 +191,23 @@ const [sensorList,setSensorList]=useState([]);
               </Navbar.Text>
               {isAdmin && (
                 <NavDropdown title="Customer" id="navbarScrollingDropdown">
-                  <NavDropdown.Item ></NavDropdown.Item>
-                  <NavDropdown.Item >
+                  <NavDropdown.Item></NavDropdown.Item>
+                  <NavDropdown.Item>
                     <Button onClick={handleDataForm} variant="success">
                       Add Customer
                     </Button>
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item >
+                  <NavDropdown.Item>
                     <Button variant="success">Remove Customer</Button>
                   </NavDropdown.Item>
                 </NavDropdown>
               )}
 
               {isAdmin && (
-                <NavDropdown title="Sesnor" id="navbarScrollingDropdown">
-                  <NavDropdown.Item >
-                    <Button onClick={handleSensorForm} variant="success">
-                      Add Sensor
-                    </Button>
-                  </NavDropdown.Item>
-                  <NavDropdown.Item >
-                    <Button variant="success">Add Sensor</Button>
-                  </NavDropdown.Item>
-                  <NavDropdown.Divider />
-                </NavDropdown>
+             <Button onClick={handleSensorForm} variant="success">
+             Add Sensor
+           </Button>
               )}
             </Nav>
 
@@ -155,107 +219,149 @@ const [sensorList,setSensorList]=useState([]);
                 aria-label="Search"
               />
               <Button variant="outline-success">Search</Button>
-              <Button onClick={()=>{navigate("/logout")}} variant="primary">Logout</Button>
+              <Button
+                onClick={() => {
+                  navigate("/logout");
+                }}
+                variant="primary"
+              >
+                Logout
+              </Button>
             </Form>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-     
-      {
-        sensorList.map((e)=>{
-          return (
-            <Row>
-                <Tank sensorId={e.sensorId}/>
-            </Row>
-          )
-          
-          
-        })
-      }
       <Row>
-        {addEmployee && isAdmin && (
-          <Col
-            style={{ backgroundColor: "white", borderRadius: 10, margin: 10 }}
-          >
-            <AddCustomerForm setAddEmployee={setAddEmployee}></AddCustomerForm>
-          </Col>
-        )}
-
-        {addSensor && isAdmin && (
-             <Col style={{ backgroundColor: "white", borderRadius: 10, margin: 10 }}>
-              <AddSensorForm setAddSensor={setAddSensor} userId={userId}></AddSensorForm>
-             </Col>
-            
-        )}
-      </Row>
-      <Row>
-        <Col style={{ backgroundColor: "white", borderRadius: 10 }}>
-          <table style={{ borderRadius: 20 }} className="table table-hover">
-            <thead>
-              <tr>
-                <th scope="col">SensorId</th>
-                <th scope="col">Name Of Sensor</th>
-                <th scope="col">Current Status</th>
-              </tr>
-            </thead>
-            <tbody>
-            {sensorList.map((sensor) => (
-          <tr key={sensor.sensorId}>
-            <td>{sensor.sensorId}</td>
-            <td>{sensor.nameOfSensor}</td>
-            <td><Button variant="warning">{sensor.currentStatus}</Button></td>
-          </tr>
-        ))}
-            </tbody>
-          </table>
-        </Col>{" "}
-        <Col
-          className="boxClass"
-          style={{ backgroundColor: "white", borderRadius: 10, margin: 10 }}
-        >
-          <table className="table table-hover ">
-            <thead>
-              <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Handle</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Reset The Chart</td>
-                <td>
-                  {" "}
-                  <Button onClick={handleClearData} variant="danger">
-                    Click to reset
-                  </Button>
-                </td>
-              </tr>
-              <tr>
-                <td>Start The sensor</td>
-                <td>
-                  {" "}
-                  <Button variant="success">click to start..</Button>
-                  <Badge pill bg="warning" text="dark">
-                    Warning
-                  </Badge>
-                </td>
-              </tr>
-              <tr>
-                <td>Stop Sensor</td>
-                <td>
-                  {" "}
-                  <Button variant="danger">Click to Stop</Button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <Col md="auto">
+          <div className="sensorTable">
+            <Table striped bordered hover variant="dark">
+              <thead>
+                <tr>
+                  <th>
+                    Name Of Sensor{" "}
+                    <Form className="d-flex">
+                      <Form.Control
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        type="search"
+                        placeholder="Search sensors..."
+                        className="me-2"
+                        aria-label="Search"
+                      />
+                    </Form>
+                  </th>
+                  <th>Delete Sensor</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredSensors.map((e) => (
+                  <tr key={e.sensorId}>
+                    <td style={{ textAlign: "center" }}>
+                      <Button
+                        onClick={() => {
+                          setSensorId(e.sensorId);
+                          setZoomValue(5);
+                          setMapShowFlag(false);
+                          setSensorName(e.nameOfSensor.split("com-")[1]);
+                        }}
+                        variant={
+                          e.currentStatus === "off" ? "danger" : "success"
+                        }
+                      >
+                        {e.nameOfSensor.split("com-")[1]}
+                      </Button>
+                    </td>
+                    <td>
+                      {" "}
+                      <Button
+                        size="sm"
+                        variant="warning"
+                        onClick={() => {
+                          setSensorId(e.sensorId);
+                          setSensorName(e.nameOfSensor);
+                          setModalShow(true);
+                        }}
+                      >
+                        Delete sensor
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            <Modal
+              show={modalShow}
+              onHide={setModalShow}
+              backdrop="static"
+              keyboard={false}
+            >
+              <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                  Modal heading
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <h4>
+                  Are You sure ..you want to delete type the name of sensor
+                  below
+                </h4>
+                <Form className="d-flex">
+                  <Form.Control
+                    onChange={(e) => setDeletedSensorName(e.target.value)}
+                    type="search"
+                    placeholder="Search sensors..."
+                    className="me-2"
+                    aria-label="Search"
+                  />
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="success"
+                  onClick={() => {
+                    setModalShow(false);
+                    handleDeleteSensor(sensorId, sensorName);
+                  }}
+                >
+                  Submit
+                </Button>
+                <Button
+                  onClick={() => {
+                    setModalShow(false);
+                  }}
+                >
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </div>
         </Col>
-        <Stack gap={3}>
-          <div className="p-2">First item</div>
-          <div className="p-2">Second item</div>
-          <div className="p-2">Third item</div>
-        </Stack>
-         
+        <Col >
+          <Row>
+            <div className="tank">
+              {showTankMap ? <Tank sensorId={sensorId} sensorName={sensorName} />: <h1>Sensor is not added ... pls add it</h1> }
+              ;
+            </div>
+          </Row>
+          <Row>
+            {" "}
+            
+              {addSensor && (<div  className="addSensorForm">
+                <AddSensorForm pageRereshToggle={pageRereshToggle} setPageRefreshToggle={setPageRefreshToggle} setAddSensor={setAddSensor} userId={userId} /> </div>
+              )}
+           
+          </Row>
+          <Row>
+            
+          </Row>
+        </Col>
+        <Col >
+        {showTankMap?   <MapComponent
+            sensorId={sensorId}
+            sensorName={sensorName}
+            zoomValue={zoomValue}
+          />:<h1>Sensor is not added ... pls add it </h1>}
+        
+        </Col>
       </Row>
     </Container>
   );

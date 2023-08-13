@@ -1,13 +1,15 @@
-.boxClass{
 
-    background-color: aliceblue;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    border-width: 5px;
+.sidebarSensorList{
+    width: 200px;
+    height: 100%;
+    background-color: rgb(118, 94, 14);
+    padding: 4px;
+}
+
+.addSensorForm{
     border-color: black;
     border-style: solid;
     border-radius: 8px;
-    padding:50px
 }
 
 
