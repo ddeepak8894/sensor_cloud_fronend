@@ -86,11 +86,7 @@ function AdminPage() {
               >
                 Logout
               </Button>
-              <Button onClick={()=>{
-                toast.success("hare krushna")
-              }}>
-toast test
-              </Button>
+            
             </Form>
           </Navbar.Collapse>
         </Container>
