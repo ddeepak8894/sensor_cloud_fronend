@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import LogoutPage from './components/logoutPage/logoutPage';
 import MapComponent from './components/Map/MapComponent';
 import AdminPage from './pages/admin/Admin';
+import ErrorPage from './components/errorPage/ErrorPage';
 
 
 const App = () => (
@@ -24,6 +25,7 @@ const App = () => (
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/logout" element={<LogoutPage />} />
       <Route path="/sensorMap" element={<MapComponent />} />
+      <Route path="/error" element={<ErrorPage />} />
 
     </Routes>
     <ToastContainer  />
