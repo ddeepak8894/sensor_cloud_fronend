@@ -4,6 +4,7 @@ import SignIn from './pages/sign_in/SignIn';
 import NavigateTest from './pages/testpages/TestNavigate';
 import { Container } from 'react-bootstrap';
 import CustomerPage from './pages/customer/Customer';
+import CustomerTank from './pages/customer_tank/CustomerTank';
 import SideBar from './components/SideBar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -25,7 +26,9 @@ const App = () => (
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/logout" element={<LogoutPage />} />
       <Route path="/sensorMap" element={<MapComponent />} />
+      <Route path="/myTanks" element={<CustomerTank />} />
       <Route path="/error" element={<ErrorPage />} />
+      
 
     </Routes>
     <ToastContainer  />
