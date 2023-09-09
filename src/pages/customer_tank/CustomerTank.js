@@ -194,11 +194,7 @@ function CustomerTank() {
 
             <Form className="d-flex">
 
-            {isAdmin && (
-             <Button onClick={handleSensorForm} variant="success">
-             Add Sensor
-           </Button>
-              )}
+      
               <Button
                 onClick={() => {
                   navigate("/myPage", { state: { userId: userId} });

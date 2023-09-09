@@ -30,11 +30,17 @@ const SignIn = () => {
       
     }else{
       console.log("user id in sign in page "+res.data.data.userId)
+      if(res.data.data.role=="super-admin"){
+        navigate("/admin", { state: { userId: res.data.data.userId} })
+
+      }else{
+        // sessionStorage.setItem('userId', res.data.data.userId)
+        // navigate(`/myPage/${res.data.data.userId}`);
+        // navigate('/myPage', { search: `userId=${res.data.data.userId}` });
+        navigate("/myTanks", { state: { userId: res.data.data.userId} });
+      }
      
-      sessionStorage.setItem('userId', res.data.data.userId)
-      // navigate(`/myPage/${res.data.data.userId}`);
-      // navigate('/myPage', { search: `userId=${res.data.data.userId}` });
-      navigate("/myTanks", { state: { userId: res.data.data.userId} });
+
     }
   })
 

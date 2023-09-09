@@ -39,7 +39,7 @@ function CustomerPage() {
   const navigate = useNavigate();
   const [addEmployee, setAddEmployee] = useState(false);
 
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [userData, setUserData] = useState({});
 
   const [searchParams] = useSearchParams();
@@ -189,20 +189,7 @@ function CustomerPage() {
               <Navbar.Text>
                 Signed in as: <a href="#login">{userData.firstName}</a>
               </Navbar.Text>
-              {isAdmin && (
-                <NavDropdown title="Customer" id="navbarScrollingDropdown">
-                  <NavDropdown.Item></NavDropdown.Item>
-                  <NavDropdown.Item>
-                    <Button onClick={handleDataForm} variant="success">
-                      Add Customer
-                    </Button>
-                  </NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item>
-                    <Button variant="success">Remove Customer</Button>
-                  </NavDropdown.Item>
-                </NavDropdown>
-              )}
+      
          {isAdmin && (
              <Button onClick={handleSensorForm} variant="success">
              Add Sensor
@@ -214,7 +201,7 @@ function CustomerPage() {
                 }}
                 variant="warning"
               >
-                Go To My Sensors
+                Go To My Tanks
               </Button>
      
             </Nav>
