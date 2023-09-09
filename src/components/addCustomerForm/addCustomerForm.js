@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 function AddCustomerForm(props) {
   // constants and variables
-  const { setAddEmployee,show,handleClose,setAddCustomerModalFormFlag } = props;
+  const { setAddEmployee,show,handleShow,handleClose,setAddCustomerModalFormFlag } = props;
   const [firstName, setFirstName] = useState("ramhari");
   const [lastName, setLastName] = useState("tiwari");
   const [email, setEmail] = useState("ramhari@gmail.com");
@@ -112,7 +112,7 @@ function AddCustomerForm(props) {
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicFirstname2">
+          <Form.Group className="mb-3" controlId="formBasicFirs33tname2">
             <Form.Label>
               Last Name<span style={{ color: "red" }}>*</span>
             </Form.Label>

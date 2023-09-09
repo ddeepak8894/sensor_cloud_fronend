@@ -34,7 +34,7 @@ const SignIn = () => {
       sessionStorage.setItem('userId', res.data.data.userId)
       // navigate(`/myPage/${res.data.data.userId}`);
       // navigate('/myPage', { search: `userId=${res.data.data.userId}` });
-      navigate("/myPage", { state: { userId: res.data.data.userId} });
+      navigate("/myTanks", { state: { userId: res.data.data.userId} });
     }
   })
 
