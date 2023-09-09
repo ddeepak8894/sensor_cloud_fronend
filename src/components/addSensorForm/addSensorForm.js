@@ -15,14 +15,14 @@ function AddSensorForm(props) {
   const sensorOptions = ["upper-tank", "lower-tank"];
 
   const sendDataToServer = () => {
-    setNameOfSensor(nameOfSensor+"-"+position)
-    console.log(nameOfSensor)
+
     const body = {
       userId,
-      nameOfSensor,
+      nameOfSensor :`${nameOfSensor}-${position}`,
       currentStatus,
       type,
     };
+    console.log(body)
     if (nameOfSensor.length > 4) {
       axios.post(`${URL}/sensor/addSensor`, body).then((res) => {
         if (res.data.data == "SENSOR_ADDED_SUCCESS") {
@@ -66,7 +66,10 @@ function AddSensorForm(props) {
           <h5 style={{ color: "red" }}>*Enter Valid Name</h5>
         )}
         <Form.Select
-          onChange={(e) => setPosition(e.target.value)}
+          onChange={(e) => {
+            setPosition(e.target.value)
+            console.log("value of position " + position)
+          }}
           value={position}
           placeholder="select is it upper or lower"
         >
