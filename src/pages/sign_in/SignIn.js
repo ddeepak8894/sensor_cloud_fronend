@@ -71,7 +71,7 @@ const SignIn = () => {
       }} variant="primary" >
         Sign in
       </Button>
-      <Row ><Link>Forgot password</Link></Row>
+     
       
     </Form>
         
