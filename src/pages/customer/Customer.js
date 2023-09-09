@@ -203,15 +203,24 @@ function CustomerPage() {
                   </NavDropdown.Item>
                 </NavDropdown>
               )}
-
-              {isAdmin && (
+         {isAdmin && (
              <Button onClick={handleSensorForm} variant="success">
              Add Sensor
            </Button>
               )}
+              <Button
+                onClick={() => {
+                  navigate("/myTanks", { state: { userId: userId} });
+                }}
+                variant="warning"
+              >
+                Go To My Sensors
+              </Button>
+     
             </Nav>
 
             <Form className="d-flex">
+              
               <Form.Control
                 type="search"
                 placeholder="Search"

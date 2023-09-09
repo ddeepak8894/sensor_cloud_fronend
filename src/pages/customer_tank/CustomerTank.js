@@ -1,6 +1,7 @@
 import {
   Badge,
   Button,
+  ButtonGroup,
   Card,
   Col,
   Container,
@@ -179,22 +180,33 @@ function CustomerTank() {
           <Navbar.Collapse id="navbarScroll">
             <Nav
               className="me-auto my-2 my-lg-0"
-              style={{ maxHeight: "200px" }}
+              style={{ maxHeight: "200px" ,margin:"10px"}}
               navbarScroll
             >
               <Navbar.Text>
                 Signed in as: <a href="#login">{userData.firstName}</a>
               </Navbar.Text>
-
-              {isAdmin && (
-             <Button onClick={handleSensorForm} variant="success">
-             Add Sensor
-           </Button>
-              )}
+          
+       
+     
             </Nav>
             
 
             <Form className="d-flex">
+
+            {isAdmin && (
+             <Button onClick={handleSensorForm} variant="success">
+             Add Sensor
+           </Button>
+              )}
+              <Button
+                onClick={() => {
+                  navigate("/myPage", { state: { userId: userId} });
+                }}
+                variant="warning"
+              >
+                Go To My Sensors
+              </Button>
               <Form className="d-flex">
                 <Form.Control
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -204,6 +216,7 @@ function CustomerTank() {
                   aria-label="Search"
                 />
               </Form>
+              
               
               <Button
                 onClick={() => {
