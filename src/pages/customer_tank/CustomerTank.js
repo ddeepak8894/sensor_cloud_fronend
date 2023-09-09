@@ -239,6 +239,17 @@ function CustomerTank() {
               )}
            
           </Row>
+          {
+            sensorList.length ==0 ? <h1>Please Add Sensors first  ===          <Button
+            onClick={() => {
+              navigate("/myPage", { state: { userId: userId} });
+            }}
+            variant="warning"
+          >
+            Go To My Sensors
+          </Button> </h1> : <></>
+
+          }
           <Row style={{ border: "solid" }}>
             {filteredSensors
               .filter((e) => e.nameOfSensor.includes("upper"))
@@ -248,7 +259,13 @@ function CustomerTank() {
                     {showTankMap ? (
                       <Tank sensorId={e.sensorId} sensorName={e.nameOfSensor} />
                     ) : (
-                      <h1>Sensor is not added ... please add it</h1>
+                      <h1>Sensor is not added ... please add it
+                                 {isAdmin && (
+             <Button onClick={handleSensorForm} variant="success">
+             Add Sensor
+           </Button>
+              )}
+                      </h1>
                     )}
                   </div>
                 </Col>

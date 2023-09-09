@@ -190,7 +190,6 @@ function AddCustomerForm(props) {
             >
               <option>Open this select menu</option>
               <option value="admin">Admin</option>
-              <option value="customer">Customer</option>
               <option value="super-admin">Super-Admin</option>
             </Form.Select>
           </Form.Group>
