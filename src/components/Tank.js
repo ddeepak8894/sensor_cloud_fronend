@@ -85,7 +85,7 @@ const Tank = (props) => {
           
   <Col>
     {
-        currentStatus ? <h1 style={{color:"green"}}> <span className="sr-only">{(currentValue * 200).toFixed(2)} Liters Water Present In Tank</span></h1> :<h1 style={{color:"red"}}>{sensorName} is Off</h1>
+        currentStatus ? <h1 style={{color:"green"}}> <span className="sr-only">{(currentValue * 200).toFixed(2)} Liters Water Present In {sensorName}</span></h1> :<h1 style={{color:"red"}}>{sensorName} is Off</h1>
     }
   </Col>
      
