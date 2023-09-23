@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { MQTT_CONFIG } from '../config';
-import mqtt from 'mqtt-browser';
+import { createMqttClient,publishMessage ,subscribeToTopic} from './utils/helpers';
+import Tank from '../components/Tank';
+import GaugeComponent from '../components/LiquideGauge/GaugeComponent';
 
 function MqttComponent() {
-  const [message, setMessage] = useState('');
+  const [data, setData] = useState(0);
   const [topic, setTopic] = useState('');
 
   useEffect(() => {
-    const brokerUrl = `ws://${MQTT_CONFIG.MQTT_SERVER}:9001`;
-    const options = {
-      username: MQTT_CONFIG.MQTT_USERNAME,
-      password: MQTT_CONFIG.MQTT_PASSWORD,
-    };
+    const client = createMqttClient();
 
-    const client = mqtt.connect(brokerUrl, options);
+    subscribeToTopic(client, 'outTopic', (receivedTopic, receivedMessage) => {
+      try {
+        const parsedMessage = JSON.parse(receivedMessage);
 
-    client.subscribe('outTopic');
+        const { data } = parsedMessage;
 
-    client.on('message', (receivedTopic, receivedMessage) => {
-      setMessage(receivedMessage);
-      setTopic(receivedTopic);
-      console.log(`Received message on topic ${receivedTopic}: ${receivedMessage}`);
+        console.log(`Received message on topic ${receivedTopic}:  Distance: ${data} cm`);
+
+        setData(parsedMessage.data);
+        setTopic(receivedTopic);
+      } catch (error) {
+        console.error(`Error parsing JSON message on topic ${receivedTopic}: ${error}`);
+      }
     });
 
     return () => {
@@ -30,51 +32,27 @@ function MqttComponent() {
 
   // Function to publish a message when the "On" button is clicked
   const publishOn = () => {
-    const client = mqtt.connect(`ws://${MQTT_CONFIG.MQTT_SERVER}:9001`, {
-      username: MQTT_CONFIG.MQTT_USERNAME,
-      password: MQTT_CONFIG.MQTT_PASSWORD,
-    });
-
+    const client = createMqttClient();
     const message = '1';
     const topic = 'inTopic';
-
-    client.publish(topic, message, (error) => {
-      if (!error) {
-        console.log(`Published message "${message}" to topic "${topic}"`);
-      } else {
-        console.error(`Failed to publish message: ${error}`);
-      }
-
-      client.end();
-    });
+    publishMessage(client, topic, message);
   };
 
   // Function to publish a message when the "Off" button is clicked
   const publishOff = () => {
-    const client = mqtt.connect(`ws://${MQTT_CONFIG.MQTT_SERVER}:9001`, {
-      username: MQTT_CONFIG.MQTT_USERNAME,
-      password: MQTT_CONFIG.MQTT_PASSWORD,
-    });
-
+    const client = createMqttClient();
     const message = '2';
     const topic = 'inTopic';
-
-    client.publish(topic, message, (error) => {
-      if (!error) {
-        console.log(`Published message "${message}" to topic "${topic}"`);
-      } else {
-        console.error(`Failed to publish message: ${error}`);
-      }
-
-      client.end();
-    });
+    publishMessage(client, topic, message);
   };
 
   return (
     <div>
-      <h1>Hare {`Received message on topic ${topic}: ${message}`}</h1>
+      <h1>Hare {`Received message on topic ${topic}: ${data}`}</h1>
       <button onClick={publishOn}>On</button>
       <button onClick={publishOff}>Off</button>
+      <GaugeComponent value={data}/>
+      <Tank currentValueMqtt={data} sensorId ={4} sensorName={"radha"}/>
     </div>
   );
 }
