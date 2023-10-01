@@ -15,6 +15,7 @@ import {
   Table,
   Toast,
 } from "react-bootstrap";
+
 import TestChart from "../../components/TestChart";
 import VolumeChart from "../../components/VolumeChart";
 import { useEffect, useState } from "react";
@@ -34,7 +35,7 @@ import axios from "axios";
 import AddSensorForm from "../../components/addSensorForm/addSensorForm";
 import MapComponent from "../../components/Map/MapComponent";
 import DeleteModal from "../../components/DeleteModal/DeleteModal";
-
+import { createMqttClient,publishMessage ,subscribeToTopic } from "../../MQTT/utils/helpers";
 function CustomerPage() {
   const navigate = useNavigate();
   const [addEmployee, setAddEmployee] = useState(false);
@@ -48,6 +49,7 @@ function CustomerPage() {
   const [sensorList, setSensorList] = useState([]);
   const [sensorId, setSensorId] = useState(1);
   const [sensorName, setSensorName] = useState("");
+  const [sensorNameFull, setSensorNameFull] = useState("");
   const [zoomValue, setZoomValue] = useState(14);
   const [mapshowFlaf, setMapShowFlag] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -55,6 +57,7 @@ function CustomerPage() {
   const [deletedSensorName, setDeletedSensorName] = useState("");
   const [pageRereshToggle, setPageRefreshToggle] = useState(true);
   const [showTankMap,setShowTankMap]=useState(false)
+
   const handleDataForm = () => {
     setAddEmployee(!addEmployee);
   };
@@ -116,6 +119,7 @@ function CustomerPage() {
         setShowTankMap(true)
         setSensorList(data.data);
         setSensorId(data.data[0].sensorId);
+        setSensorNameFull(data.data[0].nameOfSensor)
         setSensorName(data.data[0].nameOfSensor.split("com-")[1]);
       }else{
         setShowTankMap(false)
@@ -166,6 +170,7 @@ function CustomerPage() {
         console.error("Error deleting sensor:", error);
       });
   };
+
   useEffect(() => {
 
     console.log("userid in useeffect = " + userId);
@@ -258,6 +263,7 @@ function CustomerPage() {
                           setZoomValue(5);
                           setMapShowFlag(false);
                           setSensorName(e.nameOfSensor.split("com-")[1]);
+                          setSensorNameFull(e.nameOfSensor)
                         }}
                         variant={
                           e.currentStatus === "off" ? "danger" : "success"
@@ -334,7 +340,7 @@ function CustomerPage() {
         <Col >
           <Row>
             <div className="tank">
-              {showTankMap ? <Tank sensorId={sensorId} sensorName={sensorName} />: <h1>Sensor is not added ... pls add it ===          {isAdmin && (
+              {showTankMap ? <Tank sensorId={sensorNameFull}  sensorName={sensorName} />: <h1>Sensor is not added ... pls add it ===          {isAdmin && (
              <Button onClick={handleSensorForm} variant="success">
              Add Sensor
            </Button>
