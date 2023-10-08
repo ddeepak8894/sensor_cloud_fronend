@@ -257,7 +257,7 @@ function CustomerTank() {
                 <Col key={e.sensorId}>
                   <div className="tank">
                     {showTankMap ? (
-                      <Tank sensorId={e.sensorId} sensorName={e.nameOfSensor} />
+                      <Tank sensorId={e.sensorId} sensorNameFull={e.nameOfSensor} sensorName={e.nameOfSensor} />
                     ) : (
                       <h1>Sensor is not added ... please add it
                                  {isAdmin && (
@@ -278,7 +278,7 @@ function CustomerTank() {
                 <Col key={e.sensorId}>
                   <div className="tank">
                     {showTankMap ? (
-                      <Tank sensorId={e.sensorId} sensorName={e.nameOfSensor} />
+                      <Tank sensorId={e.sensorId} sensorNameFull={e.nameOfSensor} sensorName={e.nameOfSensor} />
                     ) : (
                       <h1>Sensor is not added ... please add it</h1>
                     )}

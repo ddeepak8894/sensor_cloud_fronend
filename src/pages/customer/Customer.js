@@ -340,7 +340,7 @@ function CustomerPage() {
         <Col >
           <Row>
             <div className="tank">
-              {showTankMap ? <Tank sensorId={sensorNameFull}  sensorName={sensorName} />: <h1>Sensor is not added ... pls add it ===          {isAdmin && (
+              {showTankMap ? <Tank sensorId={sensorId} sensorNameFull={sensorNameFull}  sensorName={sensorNameFull} />: <h1>Sensor is not added ... pls add it ===          {isAdmin && (
              <Button onClick={handleSensorForm} variant="success">
              Add Sensor
            </Button>
