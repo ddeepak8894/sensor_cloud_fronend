@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Speedometer from "react-d3-speedometer";
 import {
   createMqttClient,
@@ -19,21 +19,28 @@ function SpeedometerGauge(props) {
   const [currentStatus, setCurrentStatus] = useState("off");
   const [showButtons, setShowButtons] = useState(false);
   const { nameOfSensor } = props;
+  const mqttClientRef = useRef(null);
 
   useEffect(()=>{},[speed])
 
+
+  // Function to publish MQTT message using the existing client
   const publish = (state) => {
-    const client = createMqttClient();
-    const message = state;
-    const topic = `vijay@gmail.com-block-43-upper-tank/motor/control`;
-    publishMessage(client, topic, message);
+    if (mqttClientRef.current) {
+      const message = state;
+      const topic = `vijay@gmail.com-block-43-upper-tank/motor/control`;
+      publishMessage(mqttClientRef.current, topic, message);
+    } else {
+      console.error("MQTT client not initialized");
+    }
   };
 
   useEffect(() => {
-    const client = createMqttClient();
+    // const client = createMqttClient();
+    mqttClientRef.current = createMqttClient();
 
     subscribeToTopic(
-      client,
+      mqttClientRef.current,
       "sensor_data/vijay@gmail.com-block-43-upper-tank",
       (receivedTopic, receivedMessage) => {
         try {
@@ -54,7 +61,7 @@ function SpeedometerGauge(props) {
     );
 
     return () => {
-      client.end();
+      mqttClientRef.current.end();
     };
   }, []);
 

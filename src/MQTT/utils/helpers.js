@@ -12,15 +12,18 @@ export function createMqttClient() {
 }
 
 // Function to publish an MQTT message
-export function publishMessage(client, topic, message) {
-  client.publish(topic, message, (error) => {
-    if (!error) {
-      console.log(`Published message "${message}" to topic "${topic}"`);
-    } else {
-      console.error(`Failed to publish message: ${error}`);
-    }
-    client.end();
-  });
+export function publishMessage(client,topic, message) {
+  if (client.connected) {
+    client.publish(topic, message, (error) => {
+      if (!error) {
+        console.log(`Published message "${message}" to topic "${topic}"`);
+      } else {
+        console.error(`Failed to publish message: ${error}`);
+      }
+    });
+  } else {
+    console.error('MQTT client is not connected');
+  }
 }
 
 // Function to subscribe to an MQTT topic
