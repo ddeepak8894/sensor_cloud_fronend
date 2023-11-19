@@ -1,18 +1,180 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import Speedometer from "react-d3-speedometer";
+import {
+  createMqttClient,
+  publishMessage,
+  subscribeToTopic,
+} from "../../MQTT/utils/helpers";
+import {
+  Button,
+  ButtonGroup,
+  Col,
+  Container,
+  Row,
+  Stack,
+} from "react-bootstrap";
 
-function SpeedometerGauge({ value }) {
+function SpeedometerGauge(props) {
+  const [speed, setSpeed] = useState(0);
+  const [currentStatus, setCurrentStatus] = useState("off");
+  const [showButtons, setShowButtons] = useState(false);
+  const { nameOfSensor } = props;
+
+  useEffect(()=>{},[speed])
+
+  const publish = (state) => {
+    const client = createMqttClient();
+    const message = state;
+    const topic = `vijay@gmail.com-block-43-upper-tank/motor/control`;
+    publishMessage(client, topic, message);
+  };
+
+  useEffect(() => {
+    const client = createMqttClient();
+
+    subscribeToTopic(
+      client,
+      "sensor_data/vijay@gmail.com-block-43-upper-tank",
+      (receivedTopic, receivedMessage) => {
+        try {
+          const parsedMessage = JSON.parse(receivedMessage);
+          console.log(parsedMessage);
+
+          const { current_motor_mode } = parsedMessage;
+          setCurrentStatus(current_motor_mode);
+          const motorSpeed = getMotorSpeed(current_motor_mode);
+
+          setSpeed(motorSpeed); // Update the speed state with the received motor speed
+        } catch (error) {
+          console.error(
+            `Error parsing JSON message on topic ${receivedTopic}: ${error}`
+          );
+        }
+      }
+    );
+
+    return () => {
+      client.end();
+    };
+  }, []);
+
+  // Function to calculate motor speed based on motor mode
+  const getMotorSpeed = (mode) => {
+    let motorSpeed = 0;
+    switch (mode) {
+      case "on":
+        motorSpeed = 0;
+        break;
+      case "off":
+        motorSpeed = 0;
+        break;
+      case "half":
+        motorSpeed = 50;
+        break;
+      case "full":
+          motorSpeed = 100;
+          break;
+      case "quarter":
+        motorSpeed = 25;
+        break;
+      case "clockwise":
+        motorSpeed = 100;
+        break;
+      case "counterclockwise":
+        motorSpeed = -100;
+        break;
+        // Implement logic for rotational movement if needed
+        break;
+      default:
+        break;
+    }
+    return motorSpeed;
+  };
+
   return (
-    <div>
-      <Speedometer
-        value={value}
-        minValue={0}
-        maxValue={100}
-        needleColor="blue"
-        startColor="red"
-        endColor="green"
-      />
-    </div>
+    <Container fluid>
+      <Row>
+        <Col className="justify-content-center">
+          <div
+            style={{
+              padding: "10px",
+              borderStyle: "solid",
+              borderWidth: "8px",
+              borderRadius: "10px",
+            }}
+          >
+            <Speedometer
+              value={speed}
+              minValue={0}
+              maxValue={100}
+              height={200}
+              width={200}
+              needleColor="black"
+              startColor="red"
+              endColor="green"
+            />
+
+            <Button variant={speed == 0 && currentStatus == 'off'  ? "danger" : "success"}>
+              {currentStatus}[{speed}]
+            </Button>
+            <hr className="my-4" />
+
+            <Stack gap={2}>
+              <Button
+                variant={currentStatus == "off" ? "danger" : "success"}
+                onClick={() => {
+                  setShowButtons(true)
+                  publish("on")}}
+              >
+                ON
+              </Button>
+              <Button
+                variant={currentStatus !== "off" ? "danger" : "success"}
+                onClick={() => {
+                  setShowButtons(false)
+                  publish("off")}}
+              >
+                OFF
+              </Button>
+              </Stack>
+              <hr className="my-4" />
+              {showButtons && (
+                <Stack gap={3}>
+                  <ButtonGroup className="me-2" aria-label="First group">
+                    <Button onClick={() => publish("quarter")}>25%</Button>{" "}
+                    <Button variant="warning" onClick={() => publish("half")}>
+                      50%
+                    </Button>
+                    <Button variant="success" onClick={() => publish("full")}>
+                      100%
+                    </Button>
+                  </ButtonGroup>
+
+                  <Button
+                    onClick={() => publish("clockwise")}
+                    variant={
+                      currentStatus != "clockwise" ? "danger" : "success"
+                    }
+                  >
+                    clockwise{" "}
+                  </Button>
+                  <Button
+                    onClick={() => publish("counterclockwise")}
+                    variant={
+                      currentStatus != "counterclockwise" ? "danger" : "success"
+                    }
+                  >
+                    {" "}
+                    Anticlockwise
+                  </Button>
+                </Stack>
+              )}
+            
+          </div>
+        </Col>
+        <Col></Col>
+      </Row>
+    </Container>
   );
 }
 

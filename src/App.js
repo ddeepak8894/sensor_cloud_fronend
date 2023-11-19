@@ -14,6 +14,8 @@ import AdminPage from './pages/admin/Admin';
 import ErrorPage from './components/errorPage/ErrorPage';
 import TestComponet from './MQTT/test_component';
 import MqttComponent from './MQTT/mqtt_component.js';
+import MyDashboard from './pages/my_dashboard/myDashboard';
+import SpeedometerGauge from './components/Speedometer/SpeedometerGauge';
 
 
 const App = () => (
@@ -30,6 +32,7 @@ const App = () => (
       <Route path="/sensorMap" element={<MapComponent />} />
       <Route path="/myTanks" element={<CustomerTank />} />
       <Route path="/error" element={<ErrorPage />} />
+      <Route path="/myDashboard" element={<SpeedometerGauge />} />
       <Route path="/mqtt" element={<MqttComponent />} />
       
 
