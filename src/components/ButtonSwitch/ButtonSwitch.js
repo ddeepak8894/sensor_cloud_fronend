@@ -21,6 +21,7 @@ function ButtonSwitch (props) {
     const [switchState, setSwitchState] = useState(false);
     const [currentStatus,setCurrentStatus] = useState("0")
     const mqttClientRef = useRef(null);
+    const {nameOfSensor} = props
 
     const handleSwitchToggle = () => {
         setSwitchState(!switchState);
@@ -30,7 +31,7 @@ function ButtonSwitch (props) {
       // Function to publish MQTT message
   const publish = (state) => {
     const message = state;
-    const topic = `vijay@gmail.com-block-43-upper-tank/button/status`;
+    const topic = `${nameOfSensor}/button/status`;
     if (mqttClientRef.current) {
       publishMessage(mqttClientRef.current, topic, message);
     } else {
@@ -44,7 +45,7 @@ function ButtonSwitch (props) {
 
     subscribeToTopic(
       mqttClientRef.current,
-      "sensor_data/vijay@gmail.com-block-43-upper-tank",
+      `sensor_data/${nameOfSensor}`,
       (receivedTopic, receivedMessage) => {
         try {
           const parsedMessage = JSON.parse(receivedMessage);

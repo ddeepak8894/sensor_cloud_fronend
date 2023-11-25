@@ -27,7 +27,7 @@ function SpeedometerGauge(props) {
   const publish = (state) => {
     if (mqttClientRef.current) {
       const message = state;
-      const topic = `vijay@gmail.com-block-43-upper-tank/motor/control`;
+      const topic = `${nameOfSensor}/motor/control`;
       publishMessage(mqttClientRef.current, topic, message);
     } else {
       console.error("MQTT client not initialized");
@@ -40,7 +40,7 @@ function SpeedometerGauge(props) {
 
     subscribeToTopic(
       mqttClientRef.current,
-      "sensor_data/vijay@gmail.com-block-43-upper-tank",
+      `sensor_data/${nameOfSensor}`,
       (receivedTopic, receivedMessage) => {
         try {
           const parsedMessage = JSON.parse(receivedMessage);

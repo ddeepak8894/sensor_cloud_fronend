@@ -17,7 +17,7 @@ function ThermometerGauge(props) {
 
     subscribeToTopic(
       mqttClientRef.current,
-      "sensor_data/vijay@gmail.com-block-43-upper-tank",
+      `sensor_data/${nameOfSensor}`,
       (receivedTopic, receivedMessage) => {
         try {
           const parsedMessage = JSON.parse(receivedMessage);

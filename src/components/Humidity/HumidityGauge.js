@@ -6,13 +6,14 @@ import { Button, Container } from "react-bootstrap";
 function HumidityGauge (props) {
     const mqttClientRef = useRef(null);
     const [humidity,setHumidity] =useState(0)
+    const {nameOfSensor} = props
     useEffect(() => {
         // const client = createMqttClient();
         mqttClientRef.current = createMqttClient();
     
         subscribeToTopic(
           mqttClientRef.current,
-          "sensor_data/vijay@gmail.com-block-43-upper-tank",
+          `sensor_data/${nameOfSensor}`,
           (receivedTopic, receivedMessage) => {
             try {
               const parsedMessage = JSON.parse(receivedMessage);
