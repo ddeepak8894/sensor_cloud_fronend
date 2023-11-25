@@ -35,7 +35,17 @@ import axios from "axios";
 import AddSensorForm from "../../components/addSensorForm/addSensorForm";
 import MapComponent from "../../components/Map/MapComponent";
 import DeleteModal from "../../components/DeleteModal/DeleteModal";
-import { createMqttClient,publishMessage ,subscribeToTopic } from "../../MQTT/utils/helpers";
+import {
+  checkMQTTTopic,
+  checkRecentMessagesOnTopic,
+  createMqttClient,
+  publishMessage,
+  subscribeToTopic,
+} from "../../MQTT/utils/helpers";
+import SpeedometerGauge from "../../components/Speedometer/SpeedometerGauge";
+import HumidityGauge from "../../components/Humidity/HumidityGauge";
+import ThermometerGauge from "../../components/temperature/ThermometerGauge";
+import ButtonSwitch from "../../components/ButtonSwitch/ButtonSwitch";
 function CustomerPage() {
   const navigate = useNavigate();
   const [addEmployee, setAddEmployee] = useState(false);
@@ -56,7 +66,8 @@ function CustomerPage() {
   const [modalShow, setModalShow] = useState(false);
   const [deletedSensorName, setDeletedSensorName] = useState("");
   const [pageRereshToggle, setPageRefreshToggle] = useState(true);
-  const [showTankMap,setShowTankMap]=useState(false)
+  const [showTankMap, setShowTankMap] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
 
   const handleDataForm = () => {
     setAddEmployee(!addEmployee);
@@ -112,31 +123,29 @@ function CustomerPage() {
   const getSensorListOfUser = () => {
     axios.get(`${URL}/sensor/getSensorsOfUser/${userId}`).then((res) => {
       const data = res.data;
-      console.log(data.data)
-  
-      
-      if(data.data.length > 0){
-        setShowTankMap(true)
+      console.log(data.data);
+
+      if (data.data.length > 0) {
+        
         setSensorList(data.data);
         setSensorId(data.data[0].sensorId);
-        setSensorNameFull(data.data[0].nameOfSensor)
+        
         setSensorName(data.data[0].nameOfSensor.split("com-")[1]);
-      }else{
-        setShowTankMap(false)
+      } else {
+        setShowTankMap(false);
       }
-      
     });
   };
 
   const handleDeleteSensor = (sensorId, nameOfSensor) => {
     // Show a confirmation alert before deleting
 
-    if (!nameOfSensor.includes(deletedSensorName) || sensorList.length ==1) {
+    if (!nameOfSensor.includes(deletedSensorName) || sensorList.length == 1) {
       // User canceled the deletion, do nothing
-      if(sensorList.length==1){
+      if (sensorList.length == 1) {
         toast.warning("can not delete all sensors", {
           position: toast.POSITION.TOP_CENTER,
-        })
+        });
       }
       toast.warning("sensor not deleted", {
         position: toast.POSITION.TOP_CENTER,
@@ -170,9 +179,21 @@ function CustomerPage() {
         console.error("Error deleting sensor:", error);
       });
   };
+  const checkTopic =  () => {
+    try {
+      const isActive =  checkRecentMessagesOnTopic(`sensor_data/${sensorNameFull}`);
+      console.log("check topic true")
+      setShowDashboard(isActive);
+      setShowTankMap(true)
+      setPageRefreshToggle(!pageRereshToggle);
+    } catch (error) {
+      setShowTankMap(false)
+      console.error("Error checking MQTT topic:", error);
+      setShowDashboard(false); // Set topic status to false on error
+    }
+  };
 
   useEffect(() => {
-
     console.log("userid in useeffect = " + userId);
     getUserDataFromServer(userId);
     getSensorListOfUser();
@@ -180,7 +201,6 @@ function CustomerPage() {
 
   return (
     <Container fluid>
-      
       <Navbar bg="dark" expand="sm" className="bg-body-tertiary">
         <Container fluid>
           <Navbar.Brand href="#">Additional Functions</Navbar.Brand>
@@ -194,25 +214,23 @@ function CustomerPage() {
               <Navbar.Text>
                 Signed in as: <a href="#login">{userData.firstName}</a>
               </Navbar.Text>
-      
-         {isAdmin && (
-             <Button onClick={handleSensorForm} variant="success">
-             Add Sensor
-           </Button>
+
+              {isAdmin && (
+                <Button onClick={handleSensorForm} variant="success">
+                  Add Sensor
+                </Button>
               )}
               <Button
                 onClick={() => {
-                  navigate("/myTanks", { state: { userId: userId} });
+                  navigate("/myTanks", { state: { userId: userId } });
                 }}
                 variant="warning"
               >
                 Go To My Tanks
               </Button>
-     
             </Nav>
 
             <Form className="d-flex">
-              
               <Form.Control
                 type="search"
                 placeholder="Search"
@@ -263,7 +281,8 @@ function CustomerPage() {
                           setZoomValue(5);
                           setMapShowFlag(false);
                           setSensorName(e.nameOfSensor.split("com-")[1]);
-                          setSensorNameFull(e.nameOfSensor)
+                          setSensorNameFull(e.nameOfSensor);
+                          checkTopic()
                         }}
                         variant={
                           e.currentStatus === "off" ? "danger" : "success"
@@ -281,6 +300,7 @@ function CustomerPage() {
                           setSensorId(e.sensorId);
                           setSensorName(e.nameOfSensor);
                           setModalShow(true);
+                          setPageRefreshToggle(!pageRereshToggle)
                         }}
                       >
                         Delete sensor
@@ -337,36 +357,70 @@ function CustomerPage() {
             </Modal>
           </div>
         </Col>
-        <Col >
-          <Row>
-            <div className="tank">
-              {showTankMap ? <Tank sensorId={sensorId} sensorNameFull={sensorNameFull}  sensorName={sensorNameFull} />: <h1>Sensor is not added ... pls add it ===          {isAdmin && (
-             <Button onClick={handleSensorForm} variant="success">
-             Add Sensor
-           </Button>
-              )}</h1> }
-              ;
-            </div>
-          </Row>
+        <Col>
           <Row>
             {" "}
-            
-              {addSensor && (<div  className="addSensorForm">
-                <AddSensorForm pageRereshToggle={pageRereshToggle} setPageRefreshToggle={setPageRefreshToggle} setAddSensor={setAddSensor} userId={userId} /> </div>
-              )}
-           
+            {showTankMap && showDashboard ? (
+              <Container fluid>
+                <Row>{sensorNameFull} <Button onClick={()=>{checkTopic(sensorNameFull)}}>click to check topic </Button></Row>
+                <Row>
+                  <Col>
+                    <SpeedometerGauge nameOfSensor={sensorNameFull} />
+                  </Col>
+                  <Col>
+                    <HumidityGauge nameOfSensor={sensorNameFull} />
+                  </Col>
+                  <Col>
+                    <ThermometerGauge nameOfSensor={sensorNameFull} />
+                  </Col>
+                  <Col>
+                    <ButtonSwitch nameOfSensor={sensorNameFull} />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Tank
+                        nameOfSensor={sensorNameFull}
+                    />
+                  </Col>
+                  <Col>
+                    {showTankMap ? (
+                      <MapComponent
+                        sensorId={sensorId}
+                        sensorName={sensorName}
+                        zoomValue={zoomValue}
+                      />
+                    ) : (
+                      <h1>Sensor is not added... please add it</h1>
+                    )}
+                  </Col>
+                </Row>
+              </Container>
+            ) : (
+              <h1>
+                Sensor is not added ... pls add it ==={" "}
+                {isAdmin && (
+                  <Button onClick={handleSensorForm} variant="success">
+                    Add Sensor
+                  </Button>
+                )}
+              </h1>
+            )}
           </Row>
+
           <Row>
-            
+            {" "}
+            {addSensor && (
+              <div className="addSensorForm">
+                <AddSensorForm
+                  pageRereshToggle={pageRereshToggle}
+                  setPageRefreshToggle={setPageRefreshToggle}
+                  setAddSensor={setAddSensor}
+                  userId={userId}
+                />{" "}
+              </div>
+            )}
           </Row>
-        </Col>
-        <Col >
-        {showTankMap?   <MapComponent
-            sensorId={sensorId}
-            sensorName={sensorName}
-            zoomValue={zoomValue}
-          />:<h1>Sensor is not added ... pls add it </h1>}
-        
         </Col>
       </Row>
     </Container>

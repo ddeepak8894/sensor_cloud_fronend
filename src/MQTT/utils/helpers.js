@@ -40,3 +40,36 @@ export function subscribeToTopic(client, topic, messageHandler) {
     messageHandler(receivedTopic, receivedMessage);
   });
 }
+
+export function checkRecentMessagesOnTopic(topic) {
+  const client = createMqttClient();
+
+  return new Promise((resolve, reject) => {
+    let receivedMessage = false;
+
+    client.on('message', (receivedTopic) => {
+      if (receivedTopic === topic) {
+        receivedMessage = true;
+      }
+    });
+
+    client.on('connect', () => {
+      client.subscribe(topic, (err) => {
+        if (err) {
+          client.end();
+          reject(err);
+        } else {
+          setTimeout(() => {
+            client.end();
+            resolve(receivedMessage);
+          }, 1000); // Resolve after 3 seconds
+        }
+      });
+    });
+
+    client.on('error', (err) => {
+      client.end();
+      reject(err);
+    });
+  });
+}
