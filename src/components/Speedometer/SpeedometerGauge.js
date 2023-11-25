@@ -21,8 +21,7 @@ function SpeedometerGauge(props) {
   const { nameOfSensor } = props;
   const mqttClientRef = useRef(null);
 
-  useEffect(()=>{},[speed])
-
+  useEffect(() => {}, [speed]);
 
   // Function to publish MQTT message using the existing client
   const publish = (state) => {
@@ -79,8 +78,8 @@ function SpeedometerGauge(props) {
         motorSpeed = 50;
         break;
       case "full":
-          motorSpeed = 100;
-          break;
+        motorSpeed = 100;
+        break;
       case "quarter":
         motorSpeed = 25;
         break;
@@ -100,87 +99,89 @@ function SpeedometerGauge(props) {
 
   return (
     <Container fluid>
-      <Row>
-        <Col className="justify-content-center">
-          <div
-            style={{
-              padding: "10px",
-              borderStyle: "solid",
-              borderWidth: "8px",
-              borderRadius: "10px",
+      <div
+        style={{
+          padding: "10px",
+          borderStyle: "solid",
+          borderWidth: "8px",
+          borderRadius: "10px",
+          
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center", // Aligns items horizontally at the center
+          justifyContent: "center", // Aligns items vertically at the center
+          margin: "auto",
+        }}
+      >
+        <Speedometer
+          value={speed}
+          minValue={0}
+          maxValue={100}
+          height={200}
+          width={200}
+          needleColor="black"
+          startColor="red"
+          endColor="green"
+        />
+
+        <Button
+          variant={speed == 0 && currentStatus == "off" ? "danger" : "success"}
+        >
+          {currentStatus}[{speed}]
+        </Button>
+        <hr className="my-4" />
+
+        <Stack gap={2}>
+          <Button
+            variant={currentStatus == "off" ? "danger" : "success"}
+            onClick={() => {
+              setShowButtons(true);
+              publish("on");
             }}
           >
-            <Speedometer
-              value={speed}
-              minValue={0}
-              maxValue={100}
-              height={200}
-              width={200}
-              needleColor="black"
-              startColor="red"
-              endColor="green"
-            />
+            ON
+          </Button>
+          <Button
+            variant={currentStatus !== "off" ? "danger" : "success"}
+            onClick={() => {
+              setShowButtons(false);
+              publish("off");
+            }}
+          >
+            OFF
+          </Button>
+        </Stack>
+        <hr className="my-4" />
+        {showButtons && (
+          <Stack gap={3}>
+            <ButtonGroup className="me-2" aria-label="First group">
+              <Button onClick={() => publish("quarter")}>25%</Button>{" "}
+              <Button variant="warning" onClick={() => publish("half")}>
+                50%
+              </Button>
+              <Button variant="success" onClick={() => publish("full")}>
+                100%
+              </Button>
+            </ButtonGroup>
 
-            <Button variant={speed == 0 && currentStatus == 'off'  ? "danger" : "success"}>
-              {currentStatus}[{speed}]
+            <Button
+              onClick={() => publish("clockwise")}
+              variant={currentStatus != "clockwise" ? "danger" : "success"}
+            >
+              clockwise{" "}
             </Button>
-            <hr className="my-4" />
-
-            <Stack gap={2}>
-              <Button
-                variant={currentStatus == "off" ? "danger" : "success"}
-                onClick={() => {
-                  setShowButtons(true)
-                  publish("on")}}
-              >
-                ON
-              </Button>
-              <Button
-                variant={currentStatus !== "off" ? "danger" : "success"}
-                onClick={() => {
-                  setShowButtons(false)
-                  publish("off")}}
-              >
-                OFF
-              </Button>
-              </Stack>
-              <hr className="my-4" />
-              {showButtons && (
-                <Stack gap={3}>
-                  <ButtonGroup className="me-2" aria-label="First group">
-                    <Button onClick={() => publish("quarter")}>25%</Button>{" "}
-                    <Button variant="warning" onClick={() => publish("half")}>
-                      50%
-                    </Button>
-                    <Button variant="success" onClick={() => publish("full")}>
-                      100%
-                    </Button>
-                  </ButtonGroup>
-
-                  <Button
-                    onClick={() => publish("clockwise")}
-                    variant={
-                      currentStatus != "clockwise" ? "danger" : "success"
-                    }
-                  >
-                    clockwise{" "}
-                  </Button>
-                  <Button
-                    onClick={() => publish("counterclockwise")}
-                    variant={
-                      currentStatus != "counterclockwise" ? "danger" : "success"
-                    }
-                  >
-                    {" "}
-                    Anticlockwise
-                  </Button>
-                </Stack>
-              )}
-            
-          </div>
-        </Col>
-        <Col></Col>
-      </Row>
+            <Button
+              onClick={() => publish("counterclockwise")}
+              variant={
+                currentStatus != "counterclockwise" ? "danger" : "success"
+              }
+            >
+              {" "}
+              Anticlockwise
+            </Button>
+          </Stack>
+        )}
+      </div>
     </Container>
   );
 }
