@@ -1,18 +1,84 @@
-import React from 'react';
-import Thermometer from "react-thermometer-chart";
+import React, { useEffect, useRef, useState } from "react";
+import { Badge, Button, Container, Stack } from "react-bootstrap";
+import Thermometer from "react-thermometer-component";
+import { createMqttClient, subscribeToTopic } from "../../MQTT/utils/helpers";
 
-function ThermometerGauge({ value }) {
+function ThermometerGauge(props) {
+  const [temperature, setTemperature] = useState(0);
+  const [currentStatus, setCurrentStatus] = useState("off");
+  const [showButtons, setShowButtons] = useState(false);
+  const { nameOfSensor } = props;
+  const mqttClientRef = useRef(null);
+  const celsiusTemperature = temperature.toFixed(2); // Temperature in Celsius (rounded to 2 decimal places)
+  const fahrenheitTemperature = ((temperature * 9) / 5 + 32).toFixed(2); // Convert Celsius to Fahrenheit
+
+
+  useEffect(() => {
+    // const client = createMqttClient();
+    mqttClientRef.current = createMqttClient();
+
+    subscribeToTopic(
+      mqttClientRef.current,
+      "sensor_data/vijay@gmail.com-block-43-upper-tank",
+      (receivedTopic, receivedMessage) => {
+        try {
+          const parsedMessage = JSON.parse(receivedMessage);
+          console.log(parsedMessage);
+
+          const { temperature } = parsedMessage;
+          setTemperature(temperature)
+
+
+        } catch (error) {
+          console.error(
+            `Error parsing JSON message on topic ${receivedTopic}: ${error}`
+          );
+        }
+      }
+    );
+
+    return () => {
+      mqttClientRef.current.end();
+    };
+  }, []);
+
+
   return (
-    <div>
+    <Container fluid>
+    <div
+      style={{
+        padding: '10px',
+        borderStyle: 'solid',
+        borderWidth: '8px',
+        borderRadius: '10px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: 'auto',
+       // Optional: Adjust maximum width as needed
+      }}
+    >
       <Thermometer
-        value={value}
-        max={100}
-        steps={10}
+        theme="light"
+        value={temperature}
+        max={70}
+        steps={5}
         format="°C"
         size="large"
-        theme="light"
+        height={300}
       />
+      <hr className="my-4" />
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Stack direction="horizontal" gap={3}>
+          <Button variant="primary">{celsiusTemperature} ℃</Button>
+          <Button variant="primary">{fahrenheitTemperature} ℉</Button>
+        </Stack>
+      </div>
     </div>
+
+  
+    </Container>
   );
 }
 
