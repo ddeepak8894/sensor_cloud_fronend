@@ -52,6 +52,7 @@ function HumidityGauge (props) {
             margin: "auto",
           }}
         >
+           <h1>Humidity Section</h1>
           <Speedometer
             value={humidity.toFixed(2)}
             minValue={0}
@@ -63,7 +64,7 @@ function HumidityGauge (props) {
             endColor="green"
           />
          
-          <Button variant="primary">{humidity.toFixed(2)} ℃</Button>
+          <Button variant="primary">{humidity.toFixed(2)}% Moisture</Button>
         </div>
         
       </Container>

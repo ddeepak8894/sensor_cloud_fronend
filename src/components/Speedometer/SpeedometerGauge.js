@@ -103,6 +103,7 @@ function SpeedometerGauge(props) {
 
   return (
     <Container fluid>
+      
       <div
         style={{
           padding: "10px",
@@ -117,6 +118,7 @@ function SpeedometerGauge(props) {
           margin: "auto",
         }}
       >
+        <h1>Motor Control Section</h1>
         <Speedometer
           value={speed}
           minValue={0}

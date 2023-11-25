@@ -57,6 +57,7 @@ function ThermometerGauge(props) {
        // Optional: Adjust maximum width as needed
       }}
     >
+      <h1>Temperature Section</h1>
       <Thermometer
         theme="light"
         value={temperature}
@@ -69,8 +70,8 @@ function ThermometerGauge(props) {
       <hr className="my-4" />
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Stack direction="horizontal" gap={3}>
-          <Button variant="primary">{celsiusTemperature} ℃</Button>
-          <Button variant="primary">{fahrenheitTemperature} ℉</Button>
+          <Button variant="warning">{celsiusTemperature} ℃</Button>
+          <Button variant="warning">{fahrenheitTemperature} ℉</Button>
         </Stack>
       </div>
     </div>

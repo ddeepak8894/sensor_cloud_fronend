@@ -88,6 +88,7 @@ function ButtonSwitch (props) {
             margin: "auto",
           }}
         >
+          <h1>Button Switch Section</h1>
     <Form>
       <Form.Check
         type="switch"
