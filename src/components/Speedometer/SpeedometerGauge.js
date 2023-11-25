@@ -48,7 +48,11 @@ function SpeedometerGauge(props) {
 
           const { current_motor_mode } = parsedMessage;
           setCurrentStatus(current_motor_mode);
+          
           const motorSpeed = getMotorSpeed(current_motor_mode);
+          if(current_motor_mode != 'off'){
+            setShowButtons(true)
+          }
 
           setSpeed(motorSpeed); // Update the speed state with the received motor speed
         } catch (error) {
