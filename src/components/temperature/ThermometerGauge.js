@@ -5,8 +5,6 @@ import { createMqttClient, subscribeToTopic } from "../../MQTT/utils/helpers";
 
 function ThermometerGauge(props) {
   const [temperature, setTemperature] = useState(0);
-  const [currentStatus, setCurrentStatus] = useState("off");
-  const [showButtons, setShowButtons] = useState(false);
   const { nameOfSensor } = props;
   const mqttClientRef = useRef(null);
   const celsiusTemperature = temperature.toFixed(2); // Temperature in Celsius (rounded to 2 decimal places)
