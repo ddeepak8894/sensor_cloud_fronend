@@ -18,6 +18,8 @@ function SpeedometerGauge(props) {
   const [speed, setSpeed] = useState(0);
   const [currentStatus, setCurrentStatus] = useState("off");
   const [showButtons, setShowButtons] = useState(false);
+  const [showComponent,setShowComponent]=useState(false)
+
   const { nameOfSensor } = props;
   const mqttClientRef = useRef(null);
 
@@ -37,7 +39,7 @@ function SpeedometerGauge(props) {
   useEffect(() => {
     // const client = createMqttClient();
     mqttClientRef.current = createMqttClient();
-
+setShowComponent(false)
     subscribeToTopic(
       mqttClientRef.current,
       `sensor_data/${nameOfSensor}`,
@@ -48,7 +50,7 @@ function SpeedometerGauge(props) {
 
           const { current_motor_mode } = parsedMessage;
           setCurrentStatus(current_motor_mode);
-          
+          setShowComponent(true)
           const motorSpeed = getMotorSpeed(current_motor_mode);
           if(current_motor_mode != 'off'){
             setShowButtons(true)
@@ -66,7 +68,7 @@ function SpeedometerGauge(props) {
     return () => {
       mqttClientRef.current.end();
     };
-  }, []);
+  }, [nameOfSensor]);
 
   // Function to calculate motor speed based on motor mode
   const getMotorSpeed = (mode) => {
@@ -103,8 +105,7 @@ function SpeedometerGauge(props) {
 
   return (
     <Container fluid>
-      
-      <div
+      {showComponent ?       <div
         style={{
           padding: "10px",
           borderStyle: "solid",
@@ -118,7 +119,7 @@ function SpeedometerGauge(props) {
           margin: "auto",
         }}
       >
-        <h1>Motor Control Section</h1>
+        <h1>Motor Control Section <h3>{nameOfSensor}</h3></h1>
         <Speedometer
           value={speed}
           minValue={0}
@@ -187,7 +188,8 @@ function SpeedometerGauge(props) {
             </Button>
           </Stack>
         )}
-      </div>
+      </div> : <h1>Motor is off </h1>}
+
     </Container>
   );
 }

@@ -16,7 +16,7 @@ const Tank = (props) => {
   const [topic, setTopic] = useState(sensorNameFull);
   const { nameOfSensor } = props;
   const mqttClientRef = useRef(null);
-
+  const [showComponent,setShowComponent]=useState(false)
 
 
   // Function to format a timestamp as a human-readable date and time
@@ -27,7 +27,7 @@ const Tank = (props) => {
   useEffect(() => {
     // const client = createMqttClient();
     mqttClientRef.current = createMqttClient();
-
+setShowComponent(false)
     subscribeToTopic(
       mqttClientRef.current,
       `sensor_data/${nameOfSensor}`,
@@ -35,7 +35,7 @@ const Tank = (props) => {
         try {
           const parsedMessage = JSON.parse(receivedMessage);
           console.log(parsedMessage);
-
+          setShowComponent(true)
           const { data } = parsedMessage;
           setData(data);
 
@@ -53,7 +53,8 @@ const Tank = (props) => {
   }, []);
   return (
     <Container>
-      <div className="charts">
+      {
+        showComponent ?       <div className="charts">
         <Row style={{ marginBottom: "10px" }}> </Row>
 
         <Row>
@@ -125,7 +126,9 @@ const Tank = (props) => {
             )}
           </Col>
         </Row>
-      </div>
+      </div> :  <h1>Distance Sensor is Off</h1>
+      }
+
     </Container>
   );
 };

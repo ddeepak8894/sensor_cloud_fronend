@@ -22,7 +22,7 @@ function ButtonSwitch (props) {
     const [currentStatus,setCurrentStatus] = useState("0")
     const mqttClientRef = useRef(null);
     const {nameOfSensor} = props
-
+    const [showComponent,setShowComponent]=useState(false)
     const handleSwitchToggle = () => {
         setSwitchState(!switchState);
         publish(!switchState ? '1' : '0'); // Publishes the opposite state when the switch is toggled
@@ -42,7 +42,7 @@ function ButtonSwitch (props) {
   useEffect(() => {
     // const client = createMqttClient();
     mqttClientRef.current = createMqttClient();
-
+setShowComponent(false)
     subscribeToTopic(
       mqttClientRef.current,
       `sensor_data/${nameOfSensor}`,
@@ -50,7 +50,7 @@ function ButtonSwitch (props) {
         try {
           const parsedMessage = JSON.parse(receivedMessage);
           console.log(parsedMessage);
-
+          setShowComponent(true)
           const { current_button_status } = parsedMessage;
           setCurrentStatus(current_button_status)
   
@@ -71,10 +71,10 @@ function ButtonSwitch (props) {
     return () => {
       mqttClientRef.current.end();
     };
-  }, []);
+  }, [nameOfSensor]);
     return ( 
         <Container fluid>
-        <div
+          {showComponent ?    <div
           style={{
             padding: "10px",
             borderStyle: "solid",
@@ -88,7 +88,7 @@ function ButtonSwitch (props) {
             margin: "auto",
           }}
         >
-          <h1>Button Switch Section</h1>
+          <h1>Button Switch Section <h3>{nameOfSensor}</h3></h1>
     <Form>
       <Form.Check
         type="switch"
@@ -105,7 +105,8 @@ function ButtonSwitch (props) {
 
          
         
-        </div>
+        </div> : <h1>Switch is Off</h1>}
+     
         
       </Container>
 

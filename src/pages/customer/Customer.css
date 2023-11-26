@@ -12,4 +12,23 @@
     border-radius: 8px;
 }
 
+.flexContainer {
+    display: flex;
+    flex-direction: row; /* Displays the containers in a horizontal row */
+    justify-content: space-between; /* Adjust as needed */
+    align-items: center; /* Aligns items vertically */
+    /* Add any other necessary styles */
+  }
+  
+  .sensorContainer {
+    display: flex;
+    gap: 1rem; /* Adjust spacing between sensors */
+    /* Add any other necessary styles */
+  }
+  
+  .mapContainer {
+    /* Styles for the map container */
+  }
+  
+
 

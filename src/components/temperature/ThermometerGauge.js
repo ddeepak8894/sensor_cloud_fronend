@@ -6,6 +6,7 @@ import { createMqttClient, subscribeToTopic } from "../../MQTT/utils/helpers";
 function ThermometerGauge(props) {
   const [temperature, setTemperature] = useState(0);
   const { nameOfSensor } = props;
+  const [showComponent,setShowComponent]=useState(false)
   const mqttClientRef = useRef(null);
   const celsiusTemperature = temperature.toFixed(2); // Temperature in Celsius (rounded to 2 decimal places)
   const fahrenheitTemperature = ((temperature * 9) / 5 + 32).toFixed(2); // Convert Celsius to Fahrenheit
@@ -14,7 +15,7 @@ function ThermometerGauge(props) {
   useEffect(() => {
     // const client = createMqttClient();
     mqttClientRef.current = createMqttClient();
-
+setShowComponent(false)
     subscribeToTopic(
       mqttClientRef.current,
       `sensor_data/${nameOfSensor}`,
@@ -25,6 +26,7 @@ function ThermometerGauge(props) {
 
           const { temperature } = parsedMessage;
           setTemperature(temperature)
+          setShowComponent(true)
 
 
         } catch (error) {
@@ -38,12 +40,12 @@ function ThermometerGauge(props) {
     return () => {
       mqttClientRef.current.end();
     };
-  }, []);
+  }, [nameOfSensor]);
 
 
   return (
     <Container fluid>
-    <div
+      {showComponent ?  <div
       style={{
         padding: '10px',
         borderStyle: 'solid',
@@ -57,10 +59,10 @@ function ThermometerGauge(props) {
        // Optional: Adjust maximum width as needed
       }}
     >
-      <h1>Temperature Section</h1>
+      <h1>Temperature Section <h3>{nameOfSensor}</h3></h1>
       <Thermometer
         theme="light"
-        value={temperature}
+        value={temperature.toFixed(2)}
         max={70}
         steps={5}
         format="°C"
@@ -74,7 +76,8 @@ function ThermometerGauge(props) {
           <Button variant="warning">{fahrenheitTemperature} ℉</Button>
         </Stack>
       </div>
-    </div>
+    </div>: <h1>Temperature Sensor is off</h1>}
+   
 
   
     </Container>

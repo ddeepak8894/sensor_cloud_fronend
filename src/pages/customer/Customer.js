@@ -39,6 +39,7 @@ import {
   checkMQTTTopic,
   checkRecentMessagesOnTopic,
   createMqttClient,
+  endMqttClient,
   publishMessage,
   subscribeToTopic,
 } from "../../MQTT/utils/helpers";
@@ -68,7 +69,7 @@ function CustomerPage() {
   const [pageRereshToggle, setPageRefreshToggle] = useState(true);
   const [showTankMap, setShowTankMap] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
-
+  const [forceRender, setForceRender] = useState(false);
   const handleDataForm = () => {
     setAddEmployee(!addEmployee);
   };
@@ -192,6 +193,10 @@ function CustomerPage() {
       setShowDashboard(false); // Set topic status to false on error
     }
   };
+  useEffect(()=>{
+    setPageRefreshToggle(!pageRereshToggle)
+
+  },[sensorNameFull])
 
   useEffect(() => {
     console.log("userid in useeffect = " + userId);
@@ -277,6 +282,7 @@ function CustomerPage() {
                     <td style={{ textAlign: "center" }}>
                       <Button
                         onClick={() => {
+                          endMqttClient()
                           setSensorId(e.sensorId);
                           setZoomValue(5);
                           setMapShowFlag(false);
@@ -362,7 +368,7 @@ function CustomerPage() {
             {" "}
             {showTankMap && showDashboard ? (
               <Container fluid>
-                <Row>{sensorNameFull} <Button onClick={()=>{checkTopic(sensorNameFull)}}>click to check topic </Button></Row>
+            
                 <Row>
                   <Col>
                     <SpeedometerGauge nameOfSensor={sensorNameFull} />

@@ -10,7 +10,12 @@ export function createMqttClient() {
   };
   return mqtt.connect(brokerUrl, options);
 }
-
+//to end the client 
+export function endMqttClient(client) {
+  if (client && client.end) {
+    client.end();
+  }
+}
 // Function to publish an MQTT message
 export function publishMessage(client,topic, message) {
   if (client.connected) {
@@ -46,10 +51,17 @@ export function checkRecentMessagesOnTopic(topic) {
 
   return new Promise((resolve, reject) => {
     let receivedMessage = false;
+    let timer;
 
     client.on('message', (receivedTopic) => {
       if (receivedTopic === topic) {
         receivedMessage = true;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          receivedMessage = false;
+          client.end();
+          resolve(false);
+        }, 400); // Reset receivedMessage after 400ms
       }
     });
 
@@ -59,10 +71,10 @@ export function checkRecentMessagesOnTopic(topic) {
           client.end();
           reject(err);
         } else {
-          setTimeout(() => {
+          timer = setTimeout(() => {
             client.end();
             resolve(receivedMessage);
-          }, 1000); // Resolve after 3 seconds
+          }, 400); // Resolve after 400ms if no new message
         }
       });
     });

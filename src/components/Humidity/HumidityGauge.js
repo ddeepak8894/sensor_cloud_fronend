@@ -6,10 +6,13 @@ import { Button, Container } from "react-bootstrap";
 function HumidityGauge (props) {
     const mqttClientRef = useRef(null);
     const [humidity,setHumidity] =useState(0)
+    const [showComponent,setShowComponent]=useState(false)
     const {nameOfSensor} = props
+
     useEffect(() => {
         // const client = createMqttClient();
         mqttClientRef.current = createMqttClient();
+        setShowComponent(false)
     
         subscribeToTopic(
           mqttClientRef.current,
@@ -21,7 +24,7 @@ function HumidityGauge (props) {
     
               const { humidity } = parsedMessage;
               setHumidity(humidity)
-    
+              setShowComponent(true)
     
             } catch (error) {
               console.error(
@@ -34,11 +37,11 @@ function HumidityGauge (props) {
         return () => {
           mqttClientRef.current.end();
         };
-      }, []);
+      }, [nameOfSensor]);
 
     return ( 
         <Container fluid>
-        <div
+          {showComponent ?       <div
           style={{
             padding: "10px",
             borderStyle: "solid",
@@ -52,7 +55,7 @@ function HumidityGauge (props) {
             margin: "auto",
           }}
         >
-           <h1>Humidity Section</h1>
+           <h1>Humidity Section <h3>{nameOfSensor}</h3></h1>
           <Speedometer
             value={humidity.toFixed(2)}
             minValue={0}
@@ -65,7 +68,8 @@ function HumidityGauge (props) {
           />
          
           <Button variant="primary">{humidity.toFixed(2)}% Moisture</Button>
-        </div>
+        </div> : <h1>Humidity Section is off</h1>}
+  
         
       </Container>
 
