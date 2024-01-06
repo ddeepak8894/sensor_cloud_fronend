@@ -368,7 +368,20 @@ function CustomerPage() {
             {" "}
             {showTankMap && showDashboard ? (
               <Container fluid>
-            
+            <h4>Full name of sensor - {sensorNameFull}</h4>
+            <Row>
+            {" "}
+            {addSensor && (
+              <div className="addSensorForm">
+                <AddSensorForm
+                  pageRereshToggle={pageRereshToggle}
+                  setPageRefreshToggle={setPageRefreshToggle}
+                  setAddSensor={setAddSensor}
+                  userId={userId}
+                />{" "}
+              </div>
+            )}
+          </Row>
                 <Row>
                   <Col>
                     <SpeedometerGauge nameOfSensor={sensorNameFull} />
@@ -393,13 +406,14 @@ function CustomerPage() {
                     {showTankMap ? (
                       <MapComponent
                         sensorId={sensorId}
-                        sensorName={sensorName}
-                        zoomValue={zoomValue}
+                        nameOfSensor={sensorNameFull}
+                        zoomValue={5}
                       />
                     ) : (
                       <h1>Sensor is not added... please add it</h1>
                     )}
                   </Col>
+         
                 </Row>
               </Container>
             ) : (
@@ -414,19 +428,7 @@ function CustomerPage() {
             )}
           </Row>
 
-          <Row>
-            {" "}
-            {addSensor && (
-              <div className="addSensorForm">
-                <AddSensorForm
-                  pageRereshToggle={pageRereshToggle}
-                  setPageRefreshToggle={setPageRefreshToggle}
-                  setAddSensor={setAddSensor}
-                  userId={userId}
-                />{" "}
-              </div>
-            )}
-          </Row>
+
         </Col>
       </Row>
     </Container>
