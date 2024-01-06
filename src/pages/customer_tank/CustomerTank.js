@@ -45,6 +45,8 @@ function CustomerTank() {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const { userId } = location.state;
+
+
   const [sensorList, setSensorList] = useState([]);
   const [sensorId, setSensorId] = useState(1);
   const [sensorName, setSensorName] = useState("");
@@ -257,7 +259,7 @@ function CustomerTank() {
                 <Col key={e.sensorId}>
                   <div className="tank">
                     {showTankMap ? (
-                      <Tank sensorId={e.sensorId} sensorName={e.nameOfSensor} />
+                      <Tank sensorId={e.sensorId} nameOfSensor={e.nameOfSensor} sensorNameFull={e.nameOfSensor} sensorName={e.nameOfSensor} />
                     ) : (
                       <h1>Sensor is not added ... please add it
                                  {isAdmin && (
@@ -278,7 +280,7 @@ function CustomerTank() {
                 <Col key={e.sensorId}>
                   <div className="tank">
                     {showTankMap ? (
-                      <Tank sensorId={e.sensorId} sensorName={e.nameOfSensor} />
+                      <Tank sensorId={e.sensorId} sensorNameFull={e.nameOfSensor} sensorName={e.nameOfSensor} />
                     ) : (
                       <h1>Sensor is not added ... please add it</h1>
                     )}

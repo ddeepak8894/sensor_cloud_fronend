@@ -12,7 +12,7 @@ function AddSensorForm(props) {
   const [type, setType] = useState("water-tank");
   const [position, setPosition] = useState("");
   const [currentStatus, setCurrentStatus] = useState("off");
-  const sensorOptions = ["upper-tank", "lower-tank"];
+  const sensorOptions = ["upper-tank", "lower-tank","sensor-pool","temperature","humidity","switch"];
 
   const sendDataToServer = () => {
 

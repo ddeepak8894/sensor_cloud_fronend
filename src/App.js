@@ -12,6 +12,13 @@ import LogoutPage from './components/logoutPage/logoutPage';
 import MapComponent from './components/Map/MapComponent';
 import AdminPage from './pages/admin/Admin';
 import ErrorPage from './components/errorPage/ErrorPage';
+import TestComponet from './MQTT/test_component';
+import MqttComponent from './MQTT/mqtt_component.js';
+import MyDashboard from './pages/my_dashboard/myDashboard';
+import SpeedometerGauge from './components/Speedometer/SpeedometerGauge';
+import ThermometerGauge from './components/temperature/ThermometerGauge';
+import HumidityGauge from './components/Humidity/HumidityGauge';
+import ButtonSwitch from './components/ButtonSwitch/ButtonSwitch';
 
 
 const App = () => (
@@ -28,6 +35,8 @@ const App = () => (
       <Route path="/sensorMap" element={<MapComponent />} />
       <Route path="/myTanks" element={<CustomerTank />} />
       <Route path="/error" element={<ErrorPage />} />
+      <Route path="/myDashboard" element={<MyDashboard />} />
+      <Route path="/mqtt" element={<MqttComponent />} />
       
 
     </Routes>
