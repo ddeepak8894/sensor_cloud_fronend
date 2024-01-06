@@ -47,6 +47,7 @@ import SpeedometerGauge from "../../components/Speedometer/SpeedometerGauge";
 import HumidityGauge from "../../components/Humidity/HumidityGauge";
 import ThermometerGauge from "../../components/temperature/ThermometerGauge";
 import ButtonSwitch from "../../components/ButtonSwitch/ButtonSwitch";
+import WebSocketImageComponent from "../../components/websocket/WebSocketImageComponent";
 function CustomerPage() {
   const navigate = useNavigate();
   const [addEmployee, setAddEmployee] = useState(false);
@@ -397,13 +398,20 @@ function CustomerPage() {
                   </Col>
                 </Row>
                 <Row>
+                <Col>
+                  <WebSocketImageComponent nameOfSensor={sensorNameFull} />
+  
+                  </Col>
                   <Col>
                     <Tank
                         nameOfSensor={sensorNameFull}
                     />
                   </Col>
-                  <Col>
-                    {showTankMap ? (
+    
+         
+                </Row>
+                <Row>
+                {showTankMap ? (
                       <MapComponent
                         sensorId={sensorId}
                         nameOfSensor={sensorNameFull}
@@ -412,8 +420,6 @@ function CustomerPage() {
                     ) : (
                       <h1>Sensor is not added... please add it</h1>
                     )}
-                  </Col>
-         
                 </Row>
               </Container>
             ) : (
